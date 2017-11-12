@@ -19,5 +19,6 @@ docker pull hugheylab/hugheyverse
 ## Getting started
 See the example in the documentation:
 ```R
+library('deltaccd')
 ?calcDeltaCCD
 ```
