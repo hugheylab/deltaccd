@@ -2,6 +2,7 @@
 #' @importFrom foreach "%do%"
 #' @importFrom foreach "%dopar%"
 #' @importFrom doRNG "%dorng%"
+#' @importFrom magrittr "%>%"
 
 globalVariables('ii')
 
@@ -25,14 +26,17 @@ globalVariables('ii')
 #' library('doRNG')
 #'
 #' registerDoParallel(cores=2)
-#' set.seed(35811)
+#' set.seed(35813)
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
 #' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+#'
+#' pRef = plotRefHeatmap(refCor)
+#' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso \code{\link{GSE19188}}, \code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}
+#' @seealso `\link{GSE19188}`, `\link{plotRefHeatmap}`, `\link{calcCCD}`, `\link{calcDeltaCCD}`
 #'
 #' @export
 getRefCor = function(species='human', useEntrezGeneId=TRUE) {
@@ -64,26 +68,25 @@ calcCCDSimple = function(ref, emat, method='spearman') {
 
 #' Calculate clock correlation distance (CCD).
 #'
-#' \code{calcCCD} quantifies the similarity of gene co-expression between a reference
+#' `calcCCD` quantifies the similarity of gene co-expression between a reference
 #' and a test dataset. Statistical significance is calculated using permutation of the genes.
 #'
 #' @param refCor Correlation matrix to be used as the reference, such as comes
-#' from \code{\link{getRefCor}}. Should contain Spearman correlation values.
-#' @param emat Matrix of expression values, where each row
-#' corresponds to a gene and each column corresponds to a sample. The rownames and colnames
-#' of \code{refCor} should be present in the rownames of \code{emat}. For the p-value
-#' calculation, it is important that \code{emat} include all measured genes, not just those
-#' in \code{refCor}.
+#' from `\link{getRefCor}()`. Should contain Spearman correlation values.
+#' @param emat Matrix of expression values, where each row corresponds to a gene and
+#' each column corresponds to a sample. The rownames and colnames of `refCor` should
+#' be present in the rownames of `emat`. For the p-value calculation, it is important
+#' that `emat` include all measured genes, not just those in `refCor`.
 #' @param groupVec Optional vector indicating the group to which group each sample belongs.
 #' If not provided, the function assumes all samples belong to the same group.
 #' @param refEmat Optional expression matrix for calculating co-expression for the reference,
-#' with the same organization as \code{emat}. Only used if \code{refCor} is not provided.
+#' with the same organization as `emat`. Only used if `refCor` is not provided.
 #' @param nPerm Number of permutations for assessing statistical significance.
-#' @param geneNames Optional vector indicating a subset of genes in \code{refCor}, \code{emat},
-#' and/or \code{refEmat} to use for calculating the CCD.
+#' @param geneNames Optional vector indicating a subset of genes in `refCor`, `emat`,
+#' and/or `refEmat` to use for calculating the CCD.
 #' @param dopar Logical indicating whether to process features in parallel. Prior to calling
-#' \code{calcCCD}, use \code{\link[doParallel]{registerDoParallel}} to register the parallel
-#' backend, followed by \code{\link{set.seed}} to make the p-values reproducible.
+#' `calcCCD()`, use `\link[doParallel]{registerDoParallel}()` to register the parallel
+#' backend, followed by `\link{set.seed}()` to make the p-values reproducible.
 #'
 #' @return A data frame with columns for group name, CCD, and p-value.
 #'
@@ -94,14 +97,17 @@ calcCCDSimple = function(ref, emat, method='spearman') {
 #' library('doRNG')
 #'
 #' registerDoParallel(cores=2)
-#' set.seed(35811)
+#' set.seed(35813)
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
 #' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+#'
+#' pRef = plotRefHeatmap(refCor)
+#' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso \code{\link{getRefCor}}, \code{\link{calcDeltaCCD}}
+#' @seealso `\link{getRefCor}`, `\link{calcDeltaCCD}`, `\link{plotHeatmap}`
 #'
 #' @export
 calcCCD = function(refCor, emat, groupVec=NULL, refEmat=NULL, nPerm=1000, geneNames=NULL, dopar=FALSE) {
@@ -171,33 +177,32 @@ makePerms = function(idx, nPerm=1000, dopar=FALSE) {
 
 #' Calculate delta clock correlation distance.
 #'
-#' \code{calcDeltaCCD} calculates the difference between the clock correlation distances (CCDs),
+#' `calcDeltaCCD` calculates the difference between the clock correlation distances (CCDs),
 #' relative to a reference, for two groups of samples. Statistical significance is calculated
 #' using permutation of the samples that belong to either of those two groups.
 #'
-#' @param refCor Correlation matrix to be used as the reference, such as comes
-#' from \code{\link{getRefCor}}. Should contain Spearman correlation values.
+#' @param refCor Correlation matrix to be used as the reference, such as comes from
+#' `\link{getRefCor}`. Should contain Spearman correlation values.
 #' @param emat Matrix of expression values, where each row
 #' corresponds to a gene and each column corresponds to a sample. The rownames and colnames
-#' of \code{refCor} should be present in the rownames of \code{emat}. For the p-value
-#' calculation, it is important that \code{emat} include all measured genes, not just those
-#' in \code{refCor}.
+#' of `refCor` should be present in the rownames of `emat`. For the p-value calculation, it
+#' is important that `emat` include all measured genes, not just those in `refCor`.
 #' @param groupVec Vector indicating the group to which group each sample belongs. It is ok
 #' for groupVec to have more than two groups.
 #' @param groupNormal Value indicating the group in groupVec that corresponds to normal or
 #' healthy. Other groups will be compared to this group.
 #' @param refEmat Optional expression matrix for calculating co-expression for the reference,
-#' with the same organization as \code{emat}. Only used if \code{refCor} is not provided.
+#' with the same organization as `emat`. Only used if `refCor` is not provided.
 #' @param nPerm Number of permutations for assessing statistical significance.
-#' @param geneNames Optional vector indicating a subset of genes in \code{refCor}, \code{emat},
-#' and/or \code{refEmat} to use for calculating the CCD.
+#' @param geneNames Optional vector indicating a subset of genes in `refCor`, `emat`,
+#' and/or `refEmat` to use for calculating the CCD.
 #' @param dopar Logical indicating whether to process features in parallel. Prior to calling
-#' \code{calcCCD}, use \code{\link[doParallel]{registerDoParallel}} to register the parallel
-#' backend, followed by \code{\link{set.seed}} to make the p-values reproducible.
+#' `calcDeltaCCD()`, use `\link[doParallel]{registerDoParallel}()` to register the
+#' parallel backend, followed by `\link{set.seed}()` to make the p-values reproducible.
 #'
 #' @return A data frame with columns for group 1, group 2, deltaCCD, and p-value. In each row,
 #' the deltaCCD is the CCD of group 2 minus the CCD of group 1, so group 1 corresponds
-#' to \code{groupNormal}.
+#' to `groupNormal`.
 #'
 #' @examples
 #' \dontrun{
@@ -206,14 +211,17 @@ makePerms = function(idx, nPerm=1000, dopar=FALSE) {
 #' library('doRNG')
 #'
 #' registerDoParallel(cores=2)
-#' set.seed(35811)
+#' set.seed(35813)
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
 #' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+#'
+#' pRef = plotRefHeatmap(refCor)
+#' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso \code{\link{getRefCor}}, \code{\link{calcCCD}}
+#' @seealso `\link{getRefCor}`, `\link{calcCCD}`, `\link{plotHeatmap}`
 #'
 #' @export
 calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat=NULL,
@@ -280,7 +288,7 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat=NULL,
 #' Gene expression data for GSE19188.
 #'
 #' Data of gene expression measured by microarray for tumor and non-tumor samples
-#' from human non-small cell lung cancer. The data is used in examples for the \code{deltaccd} package.
+#' from human non-small cell lung cancer. The data is used in examples for the `deltaccd} package.
 #'
 #' @format A list with two objects:
 #' \describe{
@@ -291,5 +299,5 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat=NULL,
 #'
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19188}
 #'
-#' @seealso \code{\link{getRefCor}}, \code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}
-"GSE19188"
+#' @seealso `\link{getRefCor}`, `\link{calcCCD}`, `\link{calcDeltaCCD}`
+'GSE19188'

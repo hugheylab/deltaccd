@@ -8,14 +8,13 @@ calcDeltaCCD(refCor, emat, groupVec, groupNormal, refEmat = NULL,
   nPerm = 1000, geneNames = NULL, dopar = FALSE)
 }
 \arguments{
-\item{refCor}{Correlation matrix to be used as the reference, such as comes
-from \code{\link{getRefCor}}. Should contain Spearman correlation values.}
+\item{refCor}{Correlation matrix to be used as the reference, such as comes from
+\code{\link{getRefCor}}. Should contain Spearman correlation values.}
 
 \item{emat}{Matrix of expression values, where each row
 corresponds to a gene and each column corresponds to a sample. The rownames and colnames
-of \code{refCor} should be present in the rownames of \code{emat}. For the p-value
-calculation, it is important that \code{emat} include all measured genes, not just those
-in \code{refCor}.}
+of \code{refCor} should be present in the rownames of \code{emat}. For the p-value calculation, it
+is important that \code{emat} include all measured genes, not just those in \code{refCor}.}
 
 \item{groupVec}{Vector indicating the group to which group each sample belongs. It is ok
 for groupVec to have more than two groups.}
@@ -32,8 +31,8 @@ with the same organization as \code{emat}. Only used if \code{refCor} is not pro
 and/or \code{refEmat} to use for calculating the CCD.}
 
 \item{dopar}{Logical indicating whether to process features in parallel. Prior to calling
-\code{calcCCD}, use \code{\link[doParallel]{registerDoParallel}} to register the parallel
-backend, followed by \code{\link{set.seed}} to make the p-values reproducible.}
+\code{calcDeltaCCD()}, use \code{\link[doParallel]{registerDoParallel}()} to register the
+parallel backend, followed by \code{\link{set.seed}()} to make the p-values reproducible.}
 }
 \value{
 A data frame with columns for group 1, group 2, deltaCCD, and p-value. In each row,
@@ -52,14 +51,17 @@ library('doParallel')
 library('doRNG')
 
 registerDoParallel(cores=2)
-set.seed(35811)
+set.seed(35813)
 
 refCor = getRefCor()
 ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
 deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+
+pRef = plotRefHeatmap(refCor)
+pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 }
 
 }
 \seealso{
-\code{\link{getRefCor}}, \code{\link{calcCCD}}
+\code{\link{getRefCor}}, \code{\link{calcCCD}}, \code{\link{plotHeatmap}}
 }
