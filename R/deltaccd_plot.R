@@ -1,6 +1,6 @@
 calcCorrSimple = function(df) {
 	geneNames = setdiff(colnames(df), 'group')
-	df1 = data.frame(cor(as.matrix(df[,geneNames]), method=method), gene1 = geneNames,
+	df1 = data.frame(stats::cor(as.matrix(df[,geneNames]), method=method), gene1 = geneNames,
 					 stringsAsFactors=FALSE, check.names=FALSE) %>%
 		tidyr::gather(-gene1, key=gene2, value=rho) %>%
 		dplyr::filter(gene1!=gene2)}

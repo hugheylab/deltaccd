@@ -61,7 +61,7 @@ calcDist = function(r1, r2) sqrt(sum((r1-r2)^2, na.rm=TRUE))
 
 calcCCDSimple = function(ref, emat, method='spearman') {
 	corVecRef = ref[upper.tri(ref)]
-	corMatTest = cor(t(emat), method=method)
+	corMatTest = stats::cor(t(emat), method=method)
 	corVecTest = corMatTest[upper.tri(corMatTest)]
 	return(calcDist(corVecRef, corVecTest))}
 
@@ -117,7 +117,7 @@ calcCCD = function(refCor, emat, groupVec=NULL, refEmat=NULL, nPerm=1000, geneNa
 	if (missing(refCor)) {
 		if (is.null(refEmat)) {
 			stop('Either refCor or refEmat must be supplied.')}
-		refCor = cor(t(refEmat[geneNames,]), method=method)
+		refCor = stats::cor(t(refEmat[geneNames,]), method=method)
 	} else if (any(rownames(refCor)!=colnames(refCor)) || !isSymmetric(refCor)) {
 		stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
@@ -161,9 +161,9 @@ calcCCD = function(refCor, emat, groupVec=NULL, refEmat=NULL, nPerm=1000, geneNa
 
 calcDeltaCCDSimple = function(ref, emat, idx, method='spearman') {
 	corVecRef = ref[upper.tri(ref)]
-	corMat0 = cor(t(emat[,!idx]), method=method)
+	corMat0 = stats::cor(t(emat[,!idx]), method=method)
 	corVec0 = corMat0[upper.tri(corMat0)]
-	corMat1 = cor(t(emat[,idx]), method=method)
+	corMat1 = stats::cor(t(emat[,idx]), method=method)
 	corVec1 = corMat1[upper.tri(corMat1)]
 	d = calcDist(corVecRef, corVec1) - calcDist(corVecRef, corVec0)
 	return(d)}
@@ -232,7 +232,7 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat=NULL,
 	if (missing(refCor)) {
 		if (is.null(refEmat)) {
 			stop('Either refCor or refEmat must be supplied.')}
-		refCor = cor(t(refEmat[geneNames,]), method=method)
+		refCor = stats::cor(t(refEmat[geneNames,]), method=method)
 	} else if (any(rownames(refCor)!=colnames(refCor)) || !isSymmetric(refCor)) {
 		stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
@@ -288,7 +288,7 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat=NULL,
 #' Gene expression data for GSE19188.
 #'
 #' Data of gene expression measured by microarray for tumor and non-tumor samples
-#' from human non-small cell lung cancer. The data is used in examples for the `deltaccd} package.
+#' from human non-small cell lung cancer. The data is used in examples for the `deltaccd` package.
 #'
 #' @format A list with two objects:
 #' \describe{

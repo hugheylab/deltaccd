@@ -16,6 +16,10 @@
 \usage{
 GSE19188
 }
+\description{
+Data of gene expression measured by microarray for tumor and non-tumor samples
+from human non-small cell lung cancer. The data is used in examples for the \code{deltaccd} package.
+}
 \seealso{
 \code{\link{getRefCor}}, \code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}
 }

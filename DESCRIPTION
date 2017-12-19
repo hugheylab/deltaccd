@@ -1,7 +1,7 @@
 Package: deltaccd
 Type: Package
 Title: Quantify clock gene co-expression relative to a reference
-Version: 0.0.0.9001
+Version: 0.0.0.9003
 Authors@R: person('Jake', 'Hughey', email='jakejhughey@gmail.com', role=c('aut', 'cre'))
 Description: deltaccd can infer progression of the circadian clock in
     transcriptome data in which samples are not labeled with time of
@@ -19,6 +19,7 @@ Imports:
 	foreach (>= 1.4.3),
 	ggplot2 (>= 2.2.1),
 	magrittr (>= 1.5),
+	scales (>= 0.5.0),
 	statmod (>= 1.4.30),
 	tidyr (>= 0.7.2)
 RoxygenNote: 6.0.1
