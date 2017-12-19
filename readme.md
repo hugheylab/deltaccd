@@ -9,7 +9,7 @@ This is the preferred method.
 ```R
 install.packages('drat')
 drat::addRepo('hugheylab')
-install.packages('deltaccd')
+install.packages('deltaccd', type='source')
 ```
 
 You can then update the package using `update.packages`.
