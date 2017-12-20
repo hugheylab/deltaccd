@@ -9,7 +9,7 @@ install.packages('drat')
 drat::addRepo('hugheylab')
 install.packages('deltaccd', type='source')
 ```
-You can then update the package using `update.packages`.
+You can update the package by calling `drat::addRepo('hugheylab')`, then `update.packages`.
 
 ## Install using devtools
 ```R
