@@ -7,20 +7,21 @@
 plotHeatmap(geneNames, emat, groupVec = NULL)
 }
 \arguments{
-\item{geneNames}{Vector indicating the subset of genes in the rownames of \code{emat} for
-which to calculate the correlations in expression.}
+\item{geneNames}{Vector indicating the subset of genes in the rownames of
+\code{emat} for which to calculate the correlations in expression.}
 
-\item{emat}{Matrix of expression values, where each row corresponds to a gene and
-each column corresponds to a sample. The elements of \code{geneNames} should be present
-in the rownames of \code{emat}.}
+\item{emat}{Matrix of expression values, where each row corresponds to a
+gene and each column corresponds to a sample. The elements of \code{geneNames}
+should be present in the rownames of \code{emat}.}
 
-\item{groupVec}{Optional vector indicating the group to which group each sample belongs.
-If not provided, the function assumes all samples belong to the same group.}
+\item{groupVec}{Optional vector indicating the group to which group each
+sample belongs. If not provided, the function assumes all samples belong
+to the same group.}
 }
 \value{
-A \code{ggplot} object, which can be saved using \code{\link[ggplot2]{ggsave}()}.
-Heatmap colors will be directly comparable to any heatmaps created by this function
-or by \code{\link{plotRefHeatmap}()}.
+A \code{ggplot} object, which can be saved using
+\code{\link[ggplot2]{ggsave}()}. Heatmap colors will be directly comparable to
+any heatmaps created by this function or by \code{\link{plotRefHeatmap}()}.
 }
 \description{
 \code{plotHeatmap} creates heatmaps of the co-expression (Spearman correlation)
@@ -32,12 +33,13 @@ library('deltaccd')
 library('doParallel')
 library('doRNG')
 
-registerDoParallel(cores=2)
+registerDoParallel(cores = 2)
 set.seed(35813)
 
 refCor = getRefCor()
-ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
-deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
+deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
+									'non-tumor', dopar = TRUE)
 
 pRef = plotRefHeatmap(refCor)
 pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)

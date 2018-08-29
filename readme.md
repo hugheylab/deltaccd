@@ -1,26 +1,28 @@
 # deltaccd
 `deltaccd` is a package for inferring progression of the circadian clock using clock gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
-For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out [Shilts et al. (bioRxiv)](https://dx.doi.org/10.1101/130765) and the [accompanying results](https://figshare.com/s/2eaf11e88642418f7e81).
+For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out [Shilts et al. (PeerJ)](https://doi.org/10.7717/peerj.4327) and the [accompanying results](https://doi.org/10.6084/m9.figshare.4906745).
 
-## Install using drat
+## Installation
+First install drat.
 ```R
 install.packages('drat')
-drat::addRepo('hugheylab')
-install.packages('deltaccd', type='source')
 ```
-You can update the package by calling `drat::addRepo('hugheylab')`, then `update.packages`.
 
-## Install using devtools
+Then add the following line to your `.Rprofile` file (located at "~/.Rprofile"), which gets run every time R starts. See [here](https://csgillespie.github.io/efficientR/3-3-r-startup.html#r-startup) for details.
 ```R
-install.packages('devtools')
-devtools::install_github('hugheylab/deltaccd')
+drat::addRepo('hugheylab')
 ```
-You can then update the package using these same two lines.
 
-## Install using docker
-You can use a pre-built [docker image](https://hub.docker.com/r/hugheylab/hugheyverse), which has all dependencies already installed:
+Now you can install the package.
+```R
+install.packages('limorhyde', type = 'source')
 ```
+You can update the package using `update.packages()`.
+
+## Docker
+You can also use a pre-built [docker image](https://hub.docker.com/r/hugheylab/hugheyverse), which has all dependencies installed.
+```bash
 docker pull hugheylab/hugheyverse
 ```
 

@@ -6,8 +6,9 @@
 \title{Gene expression data for GSE19188.}
 \format{A list with two objects:
 \describe{
-\item{emat}{matrix of normalized expression values, where each row corresponds to a gene
-(rownames correspond to Entrez gene IDs) and each column corresponds to a sample}
+\item{emat}{matrix of normalized expression values, where each row
+corresponds to a gene (rownames correspond to Entrez gene IDs) and each
+column corresponds to a sample}
 \item{groupVec}{vector of condition (tumor or non-tumor) for each sample}
 }}
 \source{
@@ -17,8 +18,9 @@
 GSE19188
 }
 \description{
-Data of gene expression measured by microarray for tumor and non-tumor samples
-from human non-small cell lung cancer. The data is used in examples for the \code{deltaccd} package.
+Data of gene expression measured by microarray for tumor and non-tumor
+samples from human non-small cell lung cancer. The data is used in examples
+for the \code{deltaccd} package.
 }
 \seealso{
 \code{\link{getRefCor}}, \code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}

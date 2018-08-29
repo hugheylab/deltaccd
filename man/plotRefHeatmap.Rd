@@ -10,9 +10,9 @@ plotRefHeatmap(refCor)
 \item{refCor}{Correlation matrix, such as comes from \code{\link{getRefCor}()}.}
 }
 \value{
-A \code{ggplot} object, which can be saved using \code{\link[ggplot2]{ggsave}()}.
-Heatmap colors will be directly comparable to any heatmaps created by this function
-or by \code{\link{plotHeatmap}()}.
+A \code{ggplot} object, which can be saved using
+\code{\link[ggplot2]{ggsave}()}. Heatmap colors will be directly comparable
+to any heatmaps created by this function or by \code{\link{plotHeatmap}()}.
 }
 \description{
 \code{plotRefHeatmap()} creates a heatmap of the reference correlation matrix
@@ -24,12 +24,13 @@ library('deltaccd')
 library('doParallel')
 library('doRNG')
 
-registerDoParallel(cores=2)
+registerDoParallel(cores = 2)
 set.seed(35813)
 
 refCor = getRefCor()
-ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
-deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
+deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
+                              'non-tumor', dopar = TRUE)
 
 pRef = plotRefHeatmap(refCor)
 pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)

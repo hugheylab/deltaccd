@@ -26,12 +26,13 @@ library('deltaccd')
 library('doParallel')
 library('doRNG')
 
-registerDoParallel(cores=2)
+registerDoParallel(cores = 2)
 set.seed(35813)
 
 refCor = getRefCor()
-ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
-deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
+deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
+                              'non-tumor', dopar = TRUE)
 
 pRef = plotRefHeatmap(refCor)
 pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
@@ -39,5 +40,6 @@ pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 
 }
 \seealso{
-\code{\link{GSE19188}}, \code{\link{plotRefHeatmap}}, \code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}
+\code{\link{GSE19188}}, \code{\link{plotRefHeatmap}}, \code{\link{calcCCD}},
+\code{\link{calcDeltaCCD}}
 }

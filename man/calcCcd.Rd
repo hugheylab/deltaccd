@@ -11,32 +11,37 @@ calcCCD(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
 \item{refCor}{Correlation matrix to be used as the reference, such as comes
 from \code{\link{getRefCor}()}. Should contain Spearman correlation values.}
 
-\item{emat}{Matrix of expression values, where each row corresponds to a gene and
-each column corresponds to a sample. The rownames and colnames of \code{refCor} should
-be present in the rownames of \code{emat}. For the p-value calculation, it is important
-that \code{emat} include all measured genes, not just those in \code{refCor}.}
+\item{emat}{Matrix of expression values, where each row corresponds to a
+gene and each column corresponds to a sample. The rownames and colnames of
+\code{refCor} should be present in the rownames of \code{emat}. For the p-value
+calculation, it is important that \code{emat} include all measured genes, not just
+those in \code{refCor}.}
 
-\item{groupVec}{Optional vector indicating the group to which group each sample belongs.
-If not provided, the function assumes all samples belong to the same group.}
+\item{groupVec}{Optional vector indicating the group to which group each
+sample belongs. If not provided, the function assumes all samples belong to
+the same group.}
 
-\item{refEmat}{Optional expression matrix for calculating co-expression for the reference,
-with the same organization as \code{emat}. Only used if \code{refCor} is not provided.}
+\item{refEmat}{Optional expression matrix for calculating co-expression for
+the reference, with the same organization as \code{emat}. Only used if \code{refCor} is
+not provided.}
 
 \item{nPerm}{Number of permutations for assessing statistical significance.}
 
-\item{geneNames}{Optional vector indicating a subset of genes in \code{refCor}, \code{emat},
-and/or \code{refEmat} to use for calculating the CCD.}
+\item{geneNames}{Optional vector indicating a subset of genes in \code{refCor},
+\code{emat}, and/or \code{refEmat} to use for calculating the CCD.}
 
-\item{dopar}{Logical indicating whether to process features in parallel. Prior to calling
-\code{calcCCD()}, use \code{\link[doParallel]{registerDoParallel}()} to register the parallel
-backend, followed by \code{\link{set.seed}()} to make the p-values reproducible.}
+\item{dopar}{Logical indicating whether to process features in parallel.
+Prior to calling \code{calcCCD()}, use \code{\link[doParallel]{registerDoParallel}()}
+to register the parallel backend, followed by \code{\link{set.seed}()} to make the
+p-values reproducible.}
 }
 \value{
 A data frame with columns for group name, CCD, and p-value.
 }
 \description{
-\code{calcCCD} quantifies the similarity of gene co-expression between a reference
-and a test dataset. Statistical significance is calculated using permutation of the genes.
+\code{calcCCD} quantifies the similarity of gene co-expression between a
+reference and a test dataset. Statistical significance is calculated
+using permutation of the genes.
 }
 \examples{
 \dontrun{
@@ -44,12 +49,13 @@ library('deltaccd')
 library('doParallel')
 library('doRNG')
 
-registerDoParallel(cores=2)
+registerDoParallel(cores = 2)
 set.seed(35813)
 
 refCor = getRefCor()
-ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar=TRUE)
-deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar=TRUE)
+ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
+deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
+                              'non-tumor', dopar = TRUE)
 
 pRef = plotRefHeatmap(refCor)
 pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
