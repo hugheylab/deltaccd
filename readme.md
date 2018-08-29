@@ -16,7 +16,7 @@ drat::addRepo('hugheylab')
 
 Now you can install the package.
 ```R
-install.packages('limorhyde', type = 'source')
+install.packages('deltaccd', type = 'source')
 ```
 You can update the package using `update.packages()`.
 
