@@ -4,18 +4,20 @@
 #' @importFrom doRNG "%dorng%"
 #' @importFrom magrittr "%>%"
 
-globalVariables('ii')
+globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2', 'method',
+                  'rho', 'group2Now', 'geneNames', 'ematNow'))
 
 
 #' Retrieve the reference correlation matrix for clock gene co-expression.
 #'
-#' The reference matrix is based on a fixed-effects meta-analysis of eight circadian
-#' transcriptome datasets from mice, as described in \url{https://dx.doi.org/10.1101/130765}.
+#' The reference matrix is based on a fixed-effects meta-analysis of eight
+#' circadian transcriptome datasets from mice, as described in
+#' [Shilts et al. 2018](https://doi.org/10.7717/peerj.4327).
 #'
-#' @param species Currently either 'human' or 'mouse'. Only affects the row and column names
-#' of the correlation matrix, not the actual values.
-#' @param useEntrezGeneId If FALSE, row and column names of correlation matrix
-#' will correspond to gene symbols (e.g., PER2).
+#' @param species Currently either 'human' or 'mouse'. Only affects the row and
+#'   column names of the correlation matrix, not the actual values.
+#' @param useEntrezGeneId If `FALSE`, row and column names of correlation matrix
+#'   will correspond to gene symbols (e.g., PER2).
 #'
 #' @return A matrix of Spearman correlation values.
 #'
@@ -37,8 +39,7 @@ globalVariables('ii')
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso `\link{GSE19188}`, `\link{plotRefHeatmap}`, `\link{calcCCD}`,
-#' `\link{calcDeltaCCD}`
+#' @seealso [GSE19188], [plotRefHeatmap()], [calcCCD()], [calcDeltaCCD()]
 #'
 #' @export
 getRefCor = function(species = 'human', useEntrezGeneId = TRUE) {
@@ -70,30 +71,28 @@ calcCCDSimple = function(ref, emat, method = 'spearman') {
 
 #' Calculate clock correlation distance (CCD).
 #'
-#' `calcCCD` quantifies the similarity of gene co-expression between a
-#' reference and a test dataset. Statistical significance is calculated
-#' using permutation of the genes.
+#' Quantify the similarity of gene co-expression between a reference and a test
+#' dataset. Statistical significance is calculated using permutation of the
+#' genes.
 #'
 #' @param refCor Correlation matrix to be used as the reference, such as comes
-#' from `\link{getRefCor}()`. Should contain Spearman correlation values.
+#'   from [getRefCor()]. Should contain Spearman correlation values.
 #' @param emat Matrix of expression values, where each row corresponds to a
-#' gene and each column corresponds to a sample. The rownames and colnames of
-#' `refCor` should be present in the rownames of `emat`. For the p-value
-#' calculation, it is important that `emat` include all measured genes, not just
-#' those in `refCor`.
+#'   gene and each column corresponds to a sample. The rownames and colnames of
+#'   `refCor` should be present in the rownames of `emat`. For the p-value
+#'   calculation, it is important that `emat` include all measured genes, not
+#'   just those in `refCor`.
 #' @param groupVec Optional vector indicating the group to which group each
-#' sample belongs. If not provided, the function assumes all samples belong to
-#' the same group.
+#'   sample belongs. If not provided, the function assumes all samples belong to
+#'   the same group.
 #' @param refEmat Optional expression matrix for calculating co-expression for
-#' the reference, with the same organization as `emat`. Only used if `refCor` is
-#' not provided.
+#'   the reference, with the same organization as `emat`. Only used if `refCor`
+#'   is not provided.
 #' @param nPerm Number of permutations for assessing statistical significance.
 #' @param geneNames Optional vector indicating a subset of genes in `refCor`,
-#' `emat`, and/or `refEmat` to use for calculating the CCD.
-#' @param dopar Logical indicating whether to process features in parallel.
-#' Prior to calling `calcCCD()`, use `\link[doParallel]{registerDoParallel}()`
-#' to register the parallel backend, followed by `\link{set.seed}()` to make the
-#' p-values reproducible.
+#'   `emat`, and/or `refEmat` to use for calculating the CCD.
+#' @param dopar Logical indicating whether to process features in parallel. Use
+#'   [doParallel::registerDoParallel()] to register the parallel backend.
 #'
 #' @return A data frame with columns for group name, CCD, and p-value.
 #'
@@ -115,7 +114,7 @@ calcCCDSimple = function(ref, emat, method = 'spearman') {
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso `\link{getRefCor}`, `\link{calcDeltaCCD}`, `\link{plotHeatmap}`
+#' @seealso [getRefCor()], [calcDeltaCCD()], [plotHeatmap()]
 #'
 #' @export
 calcCCD = function(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
@@ -192,36 +191,34 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 
 #' Calculate delta clock correlation distance.
 #'
-#' `calcDeltaCCD` calculates the difference between the clock correlation
-#' distances (CCDs), relative to a reference, for two groups of samples.
-#' Statistical significance is calculated using permutation of the samples that
-#' belong to either of those two groups.
+#' Calculate the difference between the clock correlation distances (CCDs),
+#' relative to a reference, for two groups of samples. Statistical significance
+#' is calculated using permutation of the samples that belong to either of those
+#' two groups.
 #'
 #' @param refCor Correlation matrix to be used as the reference, such as comes
-#' from `\link{getRefCor}`. Should contain Spearman correlation values.
-#' @param emat Matrix of expression values, where each row
-#' corresponds to a gene and each column corresponds to a sample. The rownames
-#' and colnames of `refCor` should be present in the rownames of `emat`. For the
-#' p-value calculation, it is important that `emat` include all measured genes,
-#' not just those in `refCor`.
+#'   from [getRefCor()]. Should contain Spearman correlation values.
+#' @param emat Matrix of expression values, where each row corresponds to a gene
+#'   and each column corresponds to a sample. The rownames and colnames of
+#'   `refCor` should be present in the rownames of `emat`. For the p-value
+#'   calculation, it is important that `emat` include all measured genes, not
+#'   just those in `refCor`.
 #' @param groupVec Vector indicating the group to which group each sample
-#' belongs. It is ok for groupVec to have more than two groups.
+#'   belongs. It's ok for groupVec to have more than two groups.
 #' @param groupNormal Value indicating the group in groupVec that corresponds to
-#' normal or healthy. Other groups will be compared to this group.
+#'   normal or healthy. Other groups will be compared to this group.
 #' @param refEmat Optional expression matrix for calculating co-expression for
-#' the reference, with the same organization as `emat`. Only used if `refCor` is
-#' not provided.
+#'   the reference, with the same organization as `emat`. Only used if `refCor`
+#'   is not provided.
 #' @param nPerm Number of permutations for assessing statistical significance.
 #' @param geneNames Optional vector indicating a subset of genes in `refCor`,
-#' `emat`, and/or `refEmat` to use for calculating the CCD.
-#' @param dopar Logical indicating whether to process features in parallel.
-#' Prior to calling `calcDeltaCCD()`, use
-#' `\link[doParallel]{registerDoParallel}()` to register the parallel backend,
-#' followed by `\link{set.seed}()` to make the p-values reproducible.
+#'   `emat`, and/or `refEmat` to use for calculating the CCD.
+#' @param dopar Logical indicating whether to process features in parallel. Use
+#'   [doParallel::registerDoParallel()] to register the parallel backend.
 #'
 #' @return A data frame with columns for group 1, group 2, deltaCCD, and
-#' p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
-#' group 1, so group 1 corresponds to `groupNormal`.
+#'   p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
+#'   group 1, so group 1 corresponds to `groupNormal`.
 #'
 #' @examples
 #' \dontrun{
@@ -241,7 +238,7 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso `\link{getRefCor}`, `\link{calcCCD}`, `\link{plotHeatmap}`
+#' @seealso [getRefCor()], [calcCCD()], [plotHeatmap()]
 #'
 #' @export
 calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
@@ -314,18 +311,17 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
 #' Gene expression data for GSE19188.
 #'
 #' Data of gene expression measured by microarray for tumor and non-tumor
-#' samples from human non-small cell lung cancer. The data is used in examples
-#' for the `deltaccd` package.
+#' samples from human non-small cell lung cancer.
 #'
 #' @format A list with two objects:
 #' \describe{
 #'    \item{emat}{matrix of normalized expression values, where each row
-#'    corresponds to a gene (rownames correspond to Entrez gene IDs) and each
-#'    column corresponds to a sample}
+#'      corresponds to a gene (rownames correspond to Entrez gene IDs) and each
+#'      column corresponds to a sample}
 #'    \item{groupVec}{vector of condition (tumor or non-tumor) for each sample}
 #' }
 #'
-#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19188}
+#' @source <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19188>
 #'
-#' @seealso `\link{getRefCor}`, `\link{calcCCD}`, `\link{calcDeltaCCD}`
+#' @seealso [getRefCor()], [calcCCD()], [calcDeltaCCD()]
 'GSE19188'

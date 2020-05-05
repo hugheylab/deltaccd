@@ -7,18 +7,19 @@
 getRefCor(species = "human", useEntrezGeneId = TRUE)
 }
 \arguments{
-\item{species}{Currently either 'human' or 'mouse'. Only affects the row and column names
-of the correlation matrix, not the actual values.}
+\item{species}{Currently either 'human' or 'mouse'. Only affects the row and
+column names of the correlation matrix, not the actual values.}
 
-\item{useEntrezGeneId}{If FALSE, row and column names of correlation matrix
+\item{useEntrezGeneId}{If \code{FALSE}, row and column names of correlation matrix
 will correspond to gene symbols (e.g., PER2).}
 }
 \value{
 A matrix of Spearman correlation values.
 }
 \description{
-The reference matrix is based on a fixed-effects meta-analysis of eight circadian
-transcriptome datasets from mice, as described in \url{https://dx.doi.org/10.1101/130765}.
+The reference matrix is based on a fixed-effects meta-analysis of eight
+circadian transcriptome datasets from mice, as described in
+\href{https://doi.org/10.7717/peerj.4327}{Shilts et al. 2018}.
 }
 \examples{
 \dontrun{
@@ -40,6 +41,5 @@ pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 
 }
 \seealso{
-\code{\link{GSE19188}}, \code{\link{plotRefHeatmap}}, \code{\link{calcCCD}},
-\code{\link{calcDeltaCCD}}
+\link{GSE19188}, \code{\link[=plotRefHeatmap]{plotRefHeatmap()}}, \code{\link[=calcCCD]{calcCCD()}}, \code{\link[=calcDeltaCCD]{calcDeltaCCD()}}
 }

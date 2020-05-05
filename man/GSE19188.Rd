@@ -4,13 +4,15 @@
 \name{GSE19188}
 \alias{GSE19188}
 \title{Gene expression data for GSE19188.}
-\format{A list with two objects:
+\format{
+A list with two objects:
 \describe{
 \item{emat}{matrix of normalized expression values, where each row
 corresponds to a gene (rownames correspond to Entrez gene IDs) and each
 column corresponds to a sample}
 \item{groupVec}{vector of condition (tumor or non-tumor) for each sample}
-}}
+}
+}
 \source{
 \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19188}
 }
@@ -19,10 +21,9 @@ GSE19188
 }
 \description{
 Data of gene expression measured by microarray for tumor and non-tumor
-samples from human non-small cell lung cancer. The data is used in examples
-for the \code{deltaccd} package.
+samples from human non-small cell lung cancer.
 }
 \seealso{
-\code{\link{getRefCor}}, \code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}
+\code{\link[=getRefCor]{getRefCor()}}, \code{\link[=calcCCD]{calcCCD()}}, \code{\link[=calcDeltaCCD]{calcDeltaCCD()}}
 }
 \keyword{datasets}

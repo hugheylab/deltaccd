@@ -4,38 +4,44 @@
 \alias{calcDeltaCCD}
 \title{Calculate delta clock correlation distance.}
 \usage{
-calcDeltaCCD(refCor, emat, groupVec, groupNormal, refEmat = NULL,
-  nPerm = 1000, geneNames = NULL, dopar = FALSE)
+calcDeltaCCD(
+  refCor,
+  emat,
+  groupVec,
+  groupNormal,
+  refEmat = NULL,
+  nPerm = 1000,
+  geneNames = NULL,
+  dopar = FALSE
+)
 }
 \arguments{
 \item{refCor}{Correlation matrix to be used as the reference, such as comes
-from \code{\link{getRefCor}}. Should contain Spearman correlation values.}
+from \code{\link[=getRefCor]{getRefCor()}}. Should contain Spearman correlation values.}
 
-\item{emat}{Matrix of expression values, where each row
-corresponds to a gene and each column corresponds to a sample. The rownames
-and colnames of \code{refCor} should be present in the rownames of \code{emat}. For the
-p-value calculation, it is important that \code{emat} include all measured genes,
-not just those in \code{refCor}.}
+\item{emat}{Matrix of expression values, where each row corresponds to a gene
+and each column corresponds to a sample. The rownames and colnames of
+\code{refCor} should be present in the rownames of \code{emat}. For the p-value
+calculation, it is important that \code{emat} include all measured genes, not
+just those in \code{refCor}.}
 
 \item{groupVec}{Vector indicating the group to which group each sample
-belongs. It is ok for groupVec to have more than two groups.}
+belongs. It's ok for groupVec to have more than two groups.}
 
 \item{groupNormal}{Value indicating the group in groupVec that corresponds to
 normal or healthy. Other groups will be compared to this group.}
 
 \item{refEmat}{Optional expression matrix for calculating co-expression for
-the reference, with the same organization as \code{emat}. Only used if \code{refCor} is
-not provided.}
+the reference, with the same organization as \code{emat}. Only used if \code{refCor}
+is not provided.}
 
 \item{nPerm}{Number of permutations for assessing statistical significance.}
 
 \item{geneNames}{Optional vector indicating a subset of genes in \code{refCor},
 \code{emat}, and/or \code{refEmat} to use for calculating the CCD.}
 
-\item{dopar}{Logical indicating whether to process features in parallel.
-Prior to calling \code{calcDeltaCCD()}, use
-\code{\link[doParallel]{registerDoParallel}()} to register the parallel backend,
-followed by \code{\link{set.seed}()} to make the p-values reproducible.}
+\item{dopar}{Logical indicating whether to process features in parallel. Use
+\code{\link[doParallel:registerDoParallel]{doParallel::registerDoParallel()}} to register the parallel backend.}
 }
 \value{
 A data frame with columns for group 1, group 2, deltaCCD, and
@@ -43,10 +49,10 @@ p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
 group 1, so group 1 corresponds to \code{groupNormal}.
 }
 \description{
-\code{calcDeltaCCD} calculates the difference between the clock correlation
-distances (CCDs), relative to a reference, for two groups of samples.
-Statistical significance is calculated using permutation of the samples that
-belong to either of those two groups.
+Calculate the difference between the clock correlation distances (CCDs),
+relative to a reference, for two groups of samples. Statistical significance
+is calculated using permutation of the samples that belong to either of those
+two groups.
 }
 \examples{
 \dontrun{
@@ -68,5 +74,5 @@ pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 
 }
 \seealso{
-\code{\link{getRefCor}}, \code{\link{calcCCD}}, \code{\link{plotHeatmap}}
+\code{\link[=getRefCor]{getRefCor()}}, \code{\link[=calcCCD]{calcCCD()}}, \code{\link[=plotHeatmap]{plotHeatmap()}}
 }

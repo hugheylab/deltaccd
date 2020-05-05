@@ -7,16 +7,15 @@
 plotRefHeatmap(refCor)
 }
 \arguments{
-\item{refCor}{Correlation matrix, such as comes from \code{\link{getRefCor}()}.}
+\item{refCor}{Correlation matrix, such as comes from \code{\link[=getRefCor]{getRefCor()}}.}
 }
 \value{
-A \code{ggplot} object, which can be saved using
-\code{\link[ggplot2]{ggsave}()}. Heatmap colors will be directly comparable
-to any heatmaps created by this function or by \code{\link{plotHeatmap}()}.
+A \code{ggplot} object, which can be saved using \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}.
+Heatmap colors will be directly comparable to any heatmaps created by this
+function or by \code{\link[=plotHeatmap]{plotHeatmap()}}.
 }
 \description{
-\code{plotRefHeatmap()} creates a heatmap of the reference correlation matrix
-for gene co-expression.
+Make a heatmap of the reference correlation matrix for gene co-expression.
 }
 \examples{
 \dontrun{
@@ -38,5 +37,5 @@ pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 
 }
 \seealso{
-\code{\link{getRefCor}}, \code{\link{plotHeatmap}}
+\code{\link[=getRefCor]{getRefCor()}}, \code{\link[=plotHeatmap]{plotHeatmap()}}
 }

@@ -19,13 +19,13 @@ sample belongs. If not provided, the function assumes all samples belong
 to the same group.}
 }
 \value{
-A \code{ggplot} object, which can be saved using
-\code{\link[ggplot2]{ggsave}()}. Heatmap colors will be directly comparable to
-any heatmaps created by this function or by \code{\link{plotRefHeatmap}()}.
+A \code{ggplot} object, which can be saved using \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}.
+Heatmap colors will be directly comparable to any heatmaps created by this
+function or by \code{\link[=plotRefHeatmap]{plotRefHeatmap()}}.
 }
 \description{
-\code{plotHeatmap} creates heatmaps of the co-expression (Spearman correlation)
-between pairs of selected genes in a dataset.
+Make heatmaps of the co-expression (Spearman correlation) between pairs of
+selected genes in a dataset.
 }
 \examples{
 \dontrun{
@@ -47,5 +47,5 @@ pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 
 }
 \seealso{
-\code{\link{calcCCD}}, \code{\link{calcDeltaCCD}}, \code{\link{plotRefHeatmap}}
+\code{\link[=calcCCD]{calcCCD()}}, \code{\link[=calcDeltaCCD]{calcDeltaCCD()}}, \code{\link[=plotRefHeatmap]{plotRefHeatmap()}}
 }

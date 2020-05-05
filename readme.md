@@ -1,5 +1,5 @@
 # deltaccd
-`deltaccd` is a package for inferring progression of the circadian clock using clock gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
+`deltaccd` infers the progression of the circadian clock using clock gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
 For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out [Shilts et al. (PeerJ)](https://doi.org/10.7717/peerj.4327) and the [accompanying results](https://doi.org/10.6084/m9.figshare.4906745).
 
@@ -13,7 +13,7 @@ If you use RStudio, go to Tools -> Global Options... -> Packages -> Add... (unde
 
 You only have to do this once.
 
-Alternatively, you can enter the following command each time you want to install or update the package.
+Alternatively, enter the following command each time you want to install or update the package.
 ```R
 options(repos = c(getOption('repos'), 'https://hugheylab.github.io/drat/'))
 ```
@@ -24,13 +24,12 @@ install.packages('deltaccd', type = 'source')
 ```
 You can update the package using `update.packages()`.
 
-## Docker
-You can also use a pre-built [docker image](https://hub.docker.com/r/hugheylab/hugheyverse), which has all dependencies installed.
+There's also a pre-built [docker image](https://hub.docker.com/r/hugheylab/hugheyverse), which has all dependencies installed.
 ```bash
 docker pull hugheylab/hugheyverse
 ```
 
-## Getting started
+## Usage
 See the example in the documentation:
 ```R
 library('deltaccd')

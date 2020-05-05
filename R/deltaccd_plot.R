@@ -49,21 +49,21 @@ plotHeatmapSimple = function(ggObj, cLims) {
 
 #' Visualize gene co-expression.
 #'
-#' `plotHeatmap` creates heatmaps of the co-expression (Spearman correlation)
-#' between pairs of selected genes in a dataset.
+#' Make heatmaps of the co-expression (Spearman correlation) between pairs of
+#' selected genes in a dataset.
 #'
 #' @param geneNames Vector indicating the subset of genes in the rownames of
-#' `emat` for which to calculate the correlations in expression.
+#'   `emat` for which to calculate the correlations in expression.
 #' @param emat Matrix of expression values, where each row corresponds to a
-#' gene and each column corresponds to a sample. The elements of `geneNames`
-#' should be present in the rownames of `emat`.
+#'   gene and each column corresponds to a sample. The elements of `geneNames`
+#'   should be present in the rownames of `emat`.
 #' @param groupVec Optional vector indicating the group to which group each
-#' sample belongs. If not provided, the function assumes all samples belong
-#' to the same group.
+#'   sample belongs. If not provided, the function assumes all samples belong
+#'   to the same group.
 #'
-#' @return A `ggplot` object, which can be saved using
-#' `\link[ggplot2]{ggsave}()`. Heatmap colors will be directly comparable to
-#' any heatmaps created by this function or by `\link{plotRefHeatmap}()`.
+#' @return A `ggplot` object, which can be saved using [ggplot2::ggsave()].
+#'   Heatmap colors will be directly comparable to any heatmaps created by this
+#'   function or by [plotRefHeatmap()].
 #'
 #' @examples
 #' \dontrun{
@@ -83,7 +83,7 @@ plotHeatmapSimple = function(ggObj, cLims) {
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso `\link{calcCCD}`, `\link{calcDeltaCCD}`, `\link{plotRefHeatmap}`
+#' @seealso [calcCCD()], [calcDeltaCCD()], [plotRefHeatmap()]
 #'
 #' @export
 plotHeatmap = function(geneNames, emat, groupVec = NULL) {
@@ -111,14 +111,13 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 
 #' Visualize the reference pattern of gene co-expression.
 #'
-#' `plotRefHeatmap()` creates a heatmap of the reference correlation matrix
-#' for gene co-expression.
+#' Make a heatmap of the reference correlation matrix for gene co-expression.
 #'
-#' @param refCor Correlation matrix, such as comes from `\link{getRefCor}()`.
+#' @param refCor Correlation matrix, such as comes from [getRefCor()].
 #'
-#' @return A `ggplot` object, which can be saved using
-#' `\link[ggplot2]{ggsave}()`. Heatmap colors will be directly comparable
-#' to any heatmaps created by this function or by `\link{plotHeatmap}()`.
+#' @return A `ggplot` object, which can be saved using [ggplot2::ggsave()].
+#'   Heatmap colors will be directly comparable to any heatmaps created by this
+#'   function or by [plotHeatmap()].
 #'
 #' @examples
 #' \dontrun{
@@ -138,7 +137,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
 #' }
 #'
-#' @seealso `\link{getRefCor}`, `\link{plotHeatmap}`
+#' @seealso [getRefCor()], [plotHeatmap()]
 #'
 #' @export
 plotRefHeatmap = function(refCor) {
