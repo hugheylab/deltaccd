@@ -40,8 +40,8 @@
 
 
 <meta property="og:title" content="Visualize gene co-expression. — plotHeatmap" />
-<meta property="og:description" content="plotHeatmap creates heatmaps of the co-expression (Spearman correlation)
-between pairs of selected genes in a dataset." />
+<meta property="og:description" content="Make heatmaps of the co-expression (Spearman correlation) between pairs of
+selected genes in a dataset." />
 
 
 
@@ -73,7 +73,7 @@ between pairs of selected genes in a dataset." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">deltaccd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
       </span>
     </div>
 
@@ -130,8 +130,8 @@ between pairs of selected genes in a dataset." />
     </div>
 
     <div class="ref-description">
-    <p><code>plotHeatmap</code> creates heatmaps of the co-expression (Spearman correlation)
-between pairs of selected genes in a dataset.</p>
+    <p>Make heatmaps of the co-expression (Spearman correlation) between pairs of
+selected genes in a dataset.</p>
     </div>
 
     <pre class="usage"><span class='fu'>plotHeatmap</span>(<span class='no'>geneNames</span>, <span class='no'>emat</span>, <span class='kw'>groupVec</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
@@ -160,12 +160,12 @@ to the same group.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>ggplot</code> object, which can be saved using
-<code><a href='https://ggplot2.tidyverse.org/reference/ggsave.html'>ggsave</a>()</code>. Heatmap colors will be directly comparable to
-any heatmaps created by this function or by <code><a href='plotRefHeatmap.html'>plotRefHeatmap</a>()</code>.</p>
+    <p>A <code>ggplot</code> object, which can be saved using <code><a href='https://ggplot2.tidyverse.org/reference/ggsave.html'>ggplot2::ggsave()</a></code>.
+Heatmap colors will be directly comparable to any heatmaps created by this
+function or by <code><a href='https://rdrr.io/pkg/deltaccd/man/plotRefHeatmap.html'>plotRefHeatmap()</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='calcCcd.html'>calcCCD</a></code>, <code><a href='calcDeltaCcd.html'>calcDeltaCCD</a></code>, <code><a href='plotRefHeatmap.html'>plotRefHeatmap</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/deltaccd/man/calcCCD.html'>calcCCD()</a></code>, <code><a href='https://rdrr.io/pkg/deltaccd/man/calcDeltaCCD.html'>calcDeltaCCD()</a></code>, <code><a href='https://rdrr.io/pkg/deltaccd/man/plotRefHeatmap.html'>plotRefHeatmap()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -176,13 +176,13 @@ any heatmaps created by this function or by <code><a href='plotRefHeatmap.html'>
 <span class='fu'><a href='https://rdrr.io/pkg/doParallel/man/registerDoParallel.html'>registerDoParallel</a></span>(<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>35813</span>)
 
-<span class='no'>refCor</span> <span class='kw'>=</span> <span class='fu'><a href='getRefCor.html'>getRefCor</a></span>()
-<span class='no'>ccdResult</span> <span class='kw'>=</span> <span class='fu'><a href='calcCcd.html'>calcCCD</a></span>(<span class='no'>refCor</span>, <span class='no'>GSE19188</span>$<span class='no'>emat</span>, <span class='no'>GSE19188</span>$<span class='no'>groupVec</span>, <span class='kw'>dopar</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>deltaCcdResult</span> <span class='kw'>=</span> <span class='fu'><a href='calcDeltaCcd.html'>calcDeltaCCD</a></span>(<span class='no'>refCor</span>, <span class='no'>GSE19188</span>$<span class='no'>emat</span>, <span class='no'>GSE19188</span>$<span class='no'>groupVec</span>,
+<span class='no'>refCor</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/deltaccd/man/getRefCor.html'>getRefCor</a></span>()
+<span class='no'>ccdResult</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/deltaccd/man/calcCCD.html'>calcCCD</a></span>(<span class='no'>refCor</span>, <span class='no'>GSE19188</span>$<span class='no'>emat</span>, <span class='no'>GSE19188</span>$<span class='no'>groupVec</span>, <span class='kw'>dopar</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>deltaCcdResult</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/deltaccd/man/calcDeltaCCD.html'>calcDeltaCCD</a></span>(<span class='no'>refCor</span>, <span class='no'>GSE19188</span>$<span class='no'>emat</span>, <span class='no'>GSE19188</span>$<span class='no'>groupVec</span>,
                                                                         <span class='st'>'non-tumor'</span>, <span class='kw'>dopar</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='no'>pRef</span> <span class='kw'>=</span> <span class='fu'><a href='plotRefHeatmap.html'>plotRefHeatmap</a></span>(<span class='no'>refCor</span>)
-<span class='no'>pTest</span> <span class='kw'>=</span> <span class='fu'>plotHeatmap</span>(<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>refCor</span>), <span class='no'>GSE19188</span>$<span class='no'>emat</span>, <span class='no'>GSE19188</span>$<span class='no'>groupVec</span>)
+<span class='no'>pRef</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/deltaccd/man/plotRefHeatmap.html'>plotRefHeatmap</a></span>(<span class='no'>refCor</span>)
+<span class='no'>pTest</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/deltaccd/man/plotHeatmap.html'>plotHeatmap</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>refCor</span>), <span class='no'>GSE19188</span>$<span class='no'>emat</span>, <span class='no'>GSE19188</span>$<span class='no'>groupVec</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
