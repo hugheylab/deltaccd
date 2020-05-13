@@ -1,5 +1,7 @@
 # deltaccd
 
+[![CircleCI](https://circleci.com/gh/hugheylab/deltaccd.svg?style=shield)](https://circleci.com/gh/hugheylab/deltaccd)
+
 `deltaccd` infers the progression of the circadian clock using clock gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
 For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out [Shilts et al. (PeerJ)](https://doi.org/10.7717/peerj.4327) and the [accompanying results](https://doi.org/10.6084/m9.figshare.4906745).
