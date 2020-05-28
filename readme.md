@@ -1,6 +1,7 @@
 # deltaccd
 
 [![CircleCI](https://circleci.com/gh/hugheylab/deltaccd.svg?style=shield)](https://circleci.com/gh/hugheylab/deltaccd)
+[![codecov](https://codecov.io/gh/hugheylab/deltaccd/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/deltaccd)
 
 `deltaccd` infers the progression of the circadian clock using clock gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
