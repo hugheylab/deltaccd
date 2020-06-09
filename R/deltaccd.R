@@ -1,8 +1,8 @@
-#' @importFrom foreach foreach
-#' @importFrom foreach "%do%"
-#' @importFrom foreach "%dopar%"
-#' @importFrom doRNG "%dorng%"
-#' @importFrom magrittr "%>%"
+#' @importFrom foreach foreach %do% %dopar%
+#' @importFrom doRNG %dorng%
+#' @importFrom magrittr %>%
+NULL
+
 
 globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2', 'method',
                   'rho', 'group2Now', 'geneNames', 'ematNow'))

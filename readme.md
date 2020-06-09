@@ -40,4 +40,4 @@ docker pull hugheylab/hugheyverse
 
 ## Usage
 
-See the example in the documentation for `calcDeltaCCD()`, as well as the full [reference documentation](reference/index.html).
+See the example in the documentation for `calcDeltaCCD()`, as well as the full [reference documentation](https://deltaccd.hugheylab.org/reference/index.html).
