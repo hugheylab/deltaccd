@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">deltaccd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -115,9 +115,9 @@
 
 <div id="deltaccd" class="section level1">
 
-<p><a href="https://circleci.com/gh/hugheylab/deltaccd"><img src="https://circleci.com/gh/hugheylab/deltaccd.svg?style=shield" alt="CircleCI"></a></p>
+<p><a href="https://circleci.com/gh/hugheylab/deltaccd"><img src="https://circleci.com/gh/hugheylab/deltaccd.svg?style=shield" alt="CircleCI"></a> <a href="https://codecov.io/gh/hugheylab/deltaccd"><img src="https://codecov.io/gh/hugheylab/deltaccd/branch/master/graph/badge.svg" alt="codecov"></a></p>
 <p><code>deltaccd</code> infers the progression of the circadian clock using clock gene co-expression. <code>deltaccd</code> works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.</p>
-<p>For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out <a href="https://doi.org/10.7717/peerj.4327">Shilts et al. (PeerJ)</a> and the <a href="https://doi.org/10.6084/m9.figshare.4906745">accompanying results</a>.</p>
+<p>For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out <a href="https://doi.org/10.7717/peerj.4327">Shilts et al. (PeerJ)</a> and the <a href="https://doi.org/10.6084/m9.figshare.4906745">accompanying results</a>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -138,12 +138,12 @@
 
 <span class="kw pkg">BiocManager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">'deltaccd'</span>, <span class="kw">site_repository</span> <span class="kw">=</span> <span class="st">'https://hugheylab.github.io/drat/'</span>)</pre></html></div>
 <p>There’s also a <a href="https://hub.docker.com/r/hugheylab/hugheyverse">docker image</a>, which has all dependencies installed.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">docker</span> pull hugheylab/hugheyverse</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">docker</span> pull hugheylab/hugheyverse</span></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p>See the example in the documentation for <code><a href="reference/calcDeltaCCD.html">calcDeltaCCD()</a></code>, as well as the full <a href="reference/index.html">reference documentation</a>.</p>
+<p>See the example in the documentation for <code><a href="reference/calcDeltaCCD.html">calcDeltaCCD()</a></code>, as well as the full <a href="https://deltaccd.hugheylab.org/reference/index.html">reference documentation</a>.</p>
 </div>
 </div>
 
