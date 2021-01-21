@@ -1,4 +1,4 @@
-calcCorrSimple = function(df) {
+calcCorrSimple = function(df, method) {
   geneNames = setdiff(colnames(df), 'group')
   df1 = data.frame(stats::cor(as.matrix(df[,geneNames]), method = method),
                    gene1 = geneNames, stringsAsFactors = FALSE,
@@ -7,11 +7,11 @@ calcCorrSimple = function(df) {
     dplyr::filter(gene1!=gene2)}
 
 
-calcCorr = function(ematNow, groupVec) {
+calcCorr = function(ematNow, groupVec, method) {
   df = data.frame(t(ematNow), group = groupVec, stringsAsFactors = FALSE,
                   check.names = FALSE) %>%
     dplyr::group_by(group) %>%
-    dplyr::do(calcCorrSimple(.)) %>%
+    dplyr::do(calcCorrSimple(., method)) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(gene1 = factor(gene1, rownames(ematNow)),
                   gene2 = factor(gene2, rev(rownames(ematNow))))}
@@ -103,7 +103,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
 
-  df = calcCorr(ematNow, groupVec)
+  df = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(df$rho)
   p = plotHeatmapSimple(ggplot2::ggplot(df) + ggplot2::facet_wrap(~ group),
                         cLims)}

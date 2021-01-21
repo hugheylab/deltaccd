@@ -40,8 +40,8 @@ is not provided.}
 \item{geneNames}{Optional vector indicating a subset of genes in \code{refCor},
 \code{emat}, and/or \code{refEmat} to use for calculating the CCD.}
 
-\item{dopar}{Logical indicating whether to process features in parallel. Use
-\code{\link[doParallel:registerDoParallel]{doParallel::registerDoParallel()}} to register the parallel backend.}
+\item{dopar}{Logical indicating whether to process features in parallel. Make
+sure to register a parallel backend first.}
 }
 \value{
 A data frame with columns for group 1, group 2, deltaCCD, and

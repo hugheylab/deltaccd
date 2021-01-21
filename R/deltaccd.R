@@ -4,7 +4,7 @@
 NULL
 
 
-globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2', 'method',
+globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2',
                   'rho', 'group2Now', 'geneNames', 'ematNow'))
 
 
@@ -91,8 +91,8 @@ calcCCDSimple = function(ref, emat, method = 'spearman') {
 #' @param nPerm Number of permutations for assessing statistical significance.
 #' @param geneNames Optional vector indicating a subset of genes in `refCor`,
 #'   `emat`, and/or `refEmat` to use for calculating the CCD.
-#' @param dopar Logical indicating whether to process features in parallel. Use
-#'   [doParallel::registerDoParallel()] to register the parallel backend.
+#' @param dopar Logical indicating whether to process features in parallel. Make
+#'   sure to register a parallel backend first.
 #'
 #' @return A data frame with columns for group name, CCD, and p-value.
 #'
@@ -213,8 +213,8 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #' @param nPerm Number of permutations for assessing statistical significance.
 #' @param geneNames Optional vector indicating a subset of genes in `refCor`,
 #'   `emat`, and/or `refEmat` to use for calculating the CCD.
-#' @param dopar Logical indicating whether to process features in parallel. Use
-#'   [doParallel::registerDoParallel()] to register the parallel backend.
+#' @param dopar Logical indicating whether to process features in parallel. Make
+#'   sure to register a parallel backend first.
 #'
 #' @return A data frame with columns for group 1, group 2, deltaCCD, and
 #'   p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
