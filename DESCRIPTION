@@ -24,6 +24,7 @@ Imports:
   statmod (>= 1.4.30),
   tidyr (>= 0.7.2)
 Suggests:
+  covr,
   doParallel (>= 1.0.11),
   knitr,
   rmarkdown
