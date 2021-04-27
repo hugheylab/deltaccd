@@ -104,7 +104,7 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
 #' @param dopar Logical indicating whether to process features in parallel. Make
 #'   sure to register a parallel backend first.
 #'
-#' @return A data frame with columns for group name, CCD, and p-value.
+#' @return A data.table with columns for group name, CCD, and p-value.
 #'
 #' @examples
 #' \dontrun{
@@ -231,7 +231,7 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #' @param dopar Logical indicating whether to process features in parallel. Make
 #'   sure to register a parallel backend first.
 #'
-#' @return A data frame with columns for group 1, group 2, deltaCCD, and
+#' @return A data.table with columns for group 1, group 2, deltaCCD, and
 #'   p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
 #'   group 1, so group 1 corresponds to `groupNormal`.
 #'
@@ -257,7 +257,8 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #'
 #' @export
 calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
-                        nPerm = 1000, geneNames = NULL, dopar = FALSE) {
+  nPerm = 1000, geneNames = NULL, dopar = FALSE, scale = FALSE) {
+  
   method = 'spearman'
   doOp = ifelse(dopar, `%dorng%`, `%do%`)
 
@@ -296,11 +297,12 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
       deltaCcdObs = calcDeltaCCDSimple(refNow, ematNow, idx2,
-        method = method)
+        method = method, scale = scale)
 
       idxPerm = makePerms(idx2, nPerm = nPerm, dopar = dopar)
       deltaCcdRand = doOp(foreach(ii = 1:nrow(idxPerm), .combine = c), {
-        calcDeltaCCDSimple(refNow, ematNow, idxPerm[ii,], method = method)})
+        calcDeltaCCDSimple(refNow, ematNow, idxPerm[ii,], method = method
+          , scale = scale)})
 
       nComb = choose(length(idx2), sum(idx2))
       pvalue = statmod::permp(sum(deltaCcdRand >= deltaCcdObs),
@@ -315,7 +317,7 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
       deltaCcdObs = calcDeltaCCDSimple(refNow, ematNow, idx2,
-        method = method)
+        method = method, scale = scale)
       data.table::data.table(DeltaCCD = deltaCcdObs, Pvalue = NA)}}
 
   result = cbind(result, resultTmp)
