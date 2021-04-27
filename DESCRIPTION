@@ -22,7 +22,8 @@ Imports:
   magrittr (>= 1.5),
   scales (>= 0.5.0),
   statmod (>= 1.4.30),
-  tidyr (>= 0.7.2)
+  tidyr (>= 0.7.2),
+  data.table (>= 1.14.0)
 Suggests:
   doParallel (>= 1.0.11),
   knitr,

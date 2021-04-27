@@ -1,21 +1,33 @@
-calcCorrSimple = function(df, method) {
-  geneNames = setdiff(colnames(df), 'group')
-  df1 = data.frame(stats::cor(as.matrix(df[,geneNames]), method = method),
-                   gene1 = geneNames, stringsAsFactors = FALSE,
-                   check.names = FALSE) %>%
-    tidyr::gather(-gene1, key = gene2, value = rho) %>%
-    dplyr::filter(gene1!=gene2)}
+calcCorrSimple = function(dt, method = 'spearman') {
+  
+  geneNames = setdiff(colnames(dt), 'group')
+  
+  dt1 = data.table::data.table(stats::cor(as.matrix(dt[, geneNames])
+                                          , method = method),
+    gene1 = geneNames)
+  dt1 = data.table::melt(dt1, id.vars = 'gene1', measure.vars = 'gene2'
+    , value.name = 'rho')
+  dt1 = dt1[gene1 != gene2]
+  
+  return(dt1)}
 
 
-calcCorr = function(ematNow, groupVec, method) {
-  df = data.frame(t(ematNow), group = groupVec, stringsAsFactors = FALSE,
-                  check.names = FALSE) %>%
-    dplyr::group_by(group) %>%
-    dplyr::do(calcCorrSimple(., method)) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(gene1 = factor(gene1, rownames(ematNow)),
-                  gene2 = factor(gene2, rev(rownames(ematNow))))}
+calcCorr = function(ematNow, groupVec, method = 'spearman') {
+  
+  dt = data.table::data.table(t(ematNow), group = groupVec)
+  
+  dtFinal = foreach::foreach(group = groupVec, .combine = rbind) %do% {
+    
+    dtTmp = calcCorrSimple(dt[group == group], method = method)
+  
+    return(dtTmp)}
 
+  dtFinal = dtFinal[
+    , `:=`(gene1 = factor(gene1, rownames(ematNow))
+           , gene2 = factor(gene2, rev(rownames(ematNow))))]
+  
+  return(dtFinal)}
+  
 
 calcColorLimits = function(vals, vLow = -1, vMid = 0, vHigh = 1,
                            cLow = '#e66101', cMid = '#f7f7f7',
@@ -103,9 +115,9 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
 
-  df = calcCorr(ematNow, groupVec, method)
-  cLims = calcColorLimits(df$rho)
-  p = plotHeatmapSimple(ggplot2::ggplot(df) + ggplot2::facet_wrap(~ group),
+  dt = calcCorr(ematNow, groupVec, method)
+  cLims = calcColorLimits(dt$rho)
+  p = plotHeatmapSimple(ggplot2::ggplot(dt) + ggplot2::facet_wrap(~ group),
                         cLims)}
 
 
@@ -143,13 +155,16 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 plotRefHeatmap = function(refCor) {
   if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
-
-  df = data.frame(refCor, gene1 = geneNames, stringsAsFactors = FALSE,
-                  check.names = FALSE) %>%
-    tidyr::gather(-gene1, key = gene2, value = rho) %>%
-    dplyr::filter(gene1 != gene2) %>%
-    dplyr::mutate(gene1 = factor(gene1, rownames(ematNow)),
-                  gene2 = factor(gene2, rev(rownames(ematNow))))
-
+  
+  dt = data.table::data.table(refCor, gene1 = geneNames)
+  
+  dt = data.table::melt
+  dt = data.table::melt(dt1, id.vars = 'gene1', measure.vars = 'gene2'
+    , value.name = 'rho')
+  dt = dt[gene1 != gene2]
+  dt[
+    , `:=`(gene1 = factor(gene1, rownames(ematNow))
+           , gene2 = factor(gene2, rev(rownames(ematNow))))]
+ 
   cLims = calcColorLimits(df$rho)
   p = plotHeatmapSimple(ggplot2::ggplot(df), cLims)}
