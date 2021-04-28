@@ -12,7 +12,8 @@ calcDeltaCCD(
   refEmat = NULL,
   nPerm = 1000,
   geneNames = NULL,
-  dopar = FALSE
+  dopar = FALSE,
+  scale = FALSE
 )
 }
 \arguments{
@@ -44,7 +45,7 @@ is not provided.}
 sure to register a parallel backend first.}
 }
 \value{
-A data frame with columns for group 1, group 2, deltaCCD, and
+A data.table with columns for group 1, group 2, deltaCCD, and
 p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
 group 1, so group 1 corresponds to \code{groupNormal}.
 }

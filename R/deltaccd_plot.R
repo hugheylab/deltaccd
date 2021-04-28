@@ -17,14 +17,14 @@ calcCorr = function(ematNow, groupVec, method = 'spearman') {
   
   dt = data.table(t(ematNow), group = groupVec)
   
-  dtFinal = foreach::foreach(grp = groupVec, .combine = rbind) %do% {
+  dtFinal = foreach(grp = groupVec, .combine = rbind) %do% {
     
     dtTmp = calcCorrSimple(dt[group == grp], method = method)
   
     return(dtTmp)}
 
-  dtFinal = dtFinal[, gene1 = factor(gene1, rownames(ematNow))]
-  dtFinal = dtFinal[, gene2 = factor(gene2, rev(rownames(ematNow)))]
+  dtFinal = dtFinal[, gene1 := factor(gene1, rownames(ematNow))]
+  dtFinal = dtFinal[, gene2 := factor(gene2, rev(rownames(ematNow)))]
   
   return(dtFinal)}
   
@@ -117,8 +117,8 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
-  p = plotHeatmapSimple(ggplot2::ggplot(dt) + ggplot2::facet_wrap(vars(group)),
-                        cLims)}
+  p = plotHeatmapSimple(ggplot2::ggplot(dt) + 
+                          ggplot2::facet_wrap(ggplot2::vars(group)), cLims)}
 
 
 #' Visualize the reference pattern of gene co-expression.
@@ -162,7 +162,7 @@ plotRefHeatmap = function(refCor) {
     , value.name = 'rho')
   dt = dt[gene1 != gene2]
   dt[, gene1 := factor(gene1, rownames(ematNow))]
-  dt[, gene2 = factor(gene2, rev(rownames(ematNow))))]
+  dt[, gene2 := factor(gene2, rev(rownames(ematNow)))]
  
   cLims = calcColorLimits(dt$rho)
   p = plotHeatmapSimple(ggplot2::ggplot(dt), cLims)}

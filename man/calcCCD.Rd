@@ -11,7 +11,8 @@ calcCCD(
   refEmat = NULL,
   nPerm = 1000,
   geneNames = NULL,
-  dopar = FALSE
+  dopar = FALSE,
+  scale = FALSE
 )
 }
 \arguments{
@@ -41,7 +42,7 @@ is not provided.}
 sure to register a parallel backend first.}
 }
 \value{
-A data frame with columns for group name, CCD, and p-value.
+A data.table with columns for group name, CCD, and p-value.
 }
 \description{
 Quantify the similarity of gene co-expression between a reference and a test
