@@ -23,8 +23,8 @@ calcCorr = function(ematNow, groupVec, method = 'spearman') {
   
     return(dtTmp)}
 
-  dtFinal = dtFinal[, gene1 := factor(gene1, rownames(ematNow))]
-  dtFinal = dtFinal[, gene2 := factor(gene2, rev(rownames(ematNow)))]
+  dtFinal[, gene1 := factor(gene1, rownames(ematNow))]
+  dtFinal[, gene2 := factor(gene2, rev(rownames(ematNow)))]
   
   return(dtFinal)}
   
@@ -158,7 +158,7 @@ plotRefHeatmap = function(refCor) {
   
   dt = data.table(refCor, gene1 = geneNames)
   
-  dt = data.table::melt(dt1, id.vars = 'gene1', measure.vars = 'gene2'
+  dt = data.table::melt(dt, id.vars = 'gene1', measure.vars = 'gene2'
     , value.name = 'rho')
   dt = dt[gene1 != gene2]
   dt[, gene1 := factor(gene1, rownames(ematNow))]

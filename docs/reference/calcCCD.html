@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualize gene co-expression. — plotHeatmap • deltaccd</title>
+<title>Calculate clock correlation distance (CCD). — calcCCD • deltaccd</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Visualize gene co-expression. — plotHeatmap" />
-<meta property="og:description" content="Make heatmaps of the co-expression (Spearman correlation) between pairs of
-selected genes in a dataset." />
+<meta property="og:title" content="Calculate clock correlation distance (CCD). — calcCCD" />
+<meta property="og:description" content="Quantify the similarity of gene co-expression between a reference and a test
+dataset. Statistical significance is calculated using permutation of the
+genes." />
 
 
 
@@ -112,48 +113,83 @@ selected genes in a dataset." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualize gene co-expression.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/hugheylab/deltaccd/blob/master/R/deltaccd_plot.R'><code>R/deltaccd_plot.R</code></a></small>
-    <div class="hidden name"><code>plotHeatmap.Rd</code></div>
+    <h1>Calculate clock correlation distance (CCD).</h1>
+    <small class="dont-index">Source: <a href='https://github.com/hugheylab/deltaccd/blob/master/R/deltaccd.R'><code>R/deltaccd.R</code></a></small>
+    <div class="hidden name"><code>calcCCD.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Make heatmaps of the co-expression (Spearman correlation) between pairs of
-selected genes in a dataset.</p>
+    <p>Quantify the similarity of gene co-expression between a reference and a test
+dataset. Statistical significance is calculated using permutation of the
+genes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotHeatmap</span><span class='op'>(</span><span class='va'>geneNames</span>, <span class='va'>emat</span>, groupVec <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>calcCCD</span><span class='op'>(</span>
+  <span class='va'>refCor</span>,
+  <span class='va'>emat</span>,
+  groupVec <span class='op'>=</span> <span class='cn'>NULL</span>,
+  refEmat <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nPerm <span class='op'>=</span> <span class='fl'>1000</span>,
+  geneNames <span class='op'>=</span> <span class='cn'>NULL</span>,
+  dopar <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  scale <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>geneNames</th>
-      <td><p>Vector indicating the subset of genes in the rownames of
-<code>emat</code> for which to calculate the correlations in expression.</p></td>
+      <th>refCor</th>
+      <td><p>Correlation matrix to be used as the reference, such as comes
+from <code><a href='getRefCor.html'>getRefCor()</a></code>. Should contain Spearman correlation values.</p></td>
     </tr>
     <tr>
       <th>emat</th>
       <td><p>Matrix of expression values, where each row corresponds to a
-gene and each column corresponds to a sample. The elements of <code>geneNames</code>
-should be present in the rownames of <code>emat</code>.</p></td>
+gene and each column corresponds to a sample. The rownames and colnames of
+<code>refCor</code> should be present in the rownames of <code>emat</code>. For the p-value
+calculation, it is important that <code>emat</code> include all measured genes, not
+just those in <code>refCor</code>.</p></td>
     </tr>
     <tr>
       <th>groupVec</th>
       <td><p>Optional vector indicating the group to which group each
-sample belongs. If not provided, the function assumes all samples belong
-to the same group.</p></td>
+sample belongs. If not provided, the function assumes all samples belong to
+the same group.</p></td>
+    </tr>
+    <tr>
+      <th>refEmat</th>
+      <td><p>Optional expression matrix for calculating co-expression for
+the reference, with the same organization as <code>emat</code>. Only used if <code>refCor</code>
+is not provided.</p></td>
+    </tr>
+    <tr>
+      <th>nPerm</th>
+      <td><p>Number of permutations for assessing statistical significance.</p></td>
+    </tr>
+    <tr>
+      <th>geneNames</th>
+      <td><p>Optional vector indicating a subset of genes in <code>refCor</code>,
+<code>emat</code>, and/or <code>refEmat</code> to use for calculating the CCD.</p></td>
+    </tr>
+    <tr>
+      <th>dopar</th>
+      <td><p>Logical indicating whether to process features in parallel. Make
+sure to register a parallel backend first.</p></td>
+    </tr>
+    <tr>
+      <th>scale</th>
+      <td><p>Logical indicating whether to scale CCD by the number of gene
+pairs.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>ggplot</code> object, which can be saved using <code><a href='https://ggplot2.tidyverse.org/reference/ggsave.html'>ggplot2::ggsave()</a></code>.
-Heatmap colors will be directly comparable to any heatmaps created by this
-function or by <code><a href='plotRefHeatmap.html'>plotRefHeatmap()</a></code>.</p>
+    <p>A data.table with columns for group name, CCD, and p-value.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='calcCCD.html'>calcCCD()</a></code>, <code><a href='calcDeltaCCD.html'>calcDeltaCCD()</a></code>, <code><a href='plotRefHeatmap.html'>plotRefHeatmap()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='getRefCor.html'>getRefCor()</a></code>, <code><a href='calcDeltaCCD.html'>calcDeltaCCD()</a></code>, <code><a href='plotHeatmap.html'>plotHeatmap()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
@@ -165,12 +201,12 @@ function or by <code><a href='plotRefHeatmap.html'>plotRefHeatmap()</a></code>.<
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>35813</span><span class='op'>)</span>
 
 <span class='va'>refCor</span> <span class='op'>=</span> <span class='fu'><a href='getRefCor.html'>getRefCor</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>ccdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcCCD.html'>calcCCD</a></span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>ccdResult</span> <span class='op'>=</span> <span class='fu'>calcCCD</span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='va'>deltaCcdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcDeltaCCD.html'>calcDeltaCCD</a></span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>,
-                  <span class='st'>'non-tumor'</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+                              <span class='st'>'non-tumor'</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='va'>pRef</span> <span class='op'>=</span> <span class='fu'><a href='plotRefHeatmap.html'>plotRefHeatmap</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>
-<span class='va'>pTest</span> <span class='op'>=</span> <span class='fu'>plotHeatmap</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span><span class='op'>)</span>
+<span class='va'>pTest</span> <span class='op'>=</span> <span class='fu'><a href='plotHeatmap.html'>plotHeatmap</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 </div></pre>

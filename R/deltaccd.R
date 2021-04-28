@@ -5,7 +5,7 @@ NULL
 
 
 globalVariables(c('ii', 'groupNow', 'grp', 'group', '.', 'gene1', 'gene2',
-                  'rho', 'group2Now', 'geneNames', 'ematNow', 'dt1'))
+                  'rho', 'group2Now', 'geneNames', 'ematNow'))
 
 
 #' Retrieve the reference correlation matrix for clock gene co-expression.
@@ -165,7 +165,7 @@ calcCCD = function(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
       ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
         method = method, scale = scale)
 
-      ccdRand = doOp (foreach(ii = 1:nPerm, .combine = c), {
+      ccdRand = doOp(foreach(ii = 1:nPerm, .combine = c), {
         genesNow = rownames(emat)
         genesNowRand = genesNow[sample.int(length(genesNow))]
         idxRand = genesNowRand %in% geneNames
