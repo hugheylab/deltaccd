@@ -1,11 +1,11 @@
 #' @importFrom foreach foreach %do% %dopar%
 #' @importFrom doRNG %dorng%
-#' @importFrom data.table data.table
+#' @importFrom data.table data.table :=
 NULL
 
 
-globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2',
-                  'rho', 'group2Now', 'geneNames', 'ematNow'))
+globalVariables(c('ii', 'groupNow', 'grp', 'group', '.', 'gene1', 'gene2',
+                  'rho', 'group2Now', 'geneNames', 'ematNow', 'dt1'))
 
 
 #' Retrieve the reference correlation matrix for clock gene co-expression.
@@ -27,7 +27,7 @@ globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2',
 #' library('doParallel')
 #' library('doRNG')
 #'
-#' registerDoParallel(cores = 2)
+#' registerDoParallel(cores )
 #' set.seed(35813)
 #'
 #' refCor = getRefCor()
@@ -103,6 +103,8 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
 #'   `emat`, and/or `refEmat` to use for calculating the CCD.
 #' @param dopar Logical indicating whether to process features in parallel. Make
 #'   sure to register a parallel backend first.
+#' @param scale Logical indicating whether to scale CCD by the number of gene
+#'   pairs.
 #'
 #' @return A data.table with columns for group name, CCD, and p-value.
 #'
@@ -230,6 +232,8 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #'   `emat`, and/or `refEmat` to use for calculating the CCD.
 #' @param dopar Logical indicating whether to process features in parallel. Make
 #'   sure to register a parallel backend first.
+#' @param scale Logical indicating whether to use scaled CCDs to calculate 
+#'   difference.
 #'
 #' @return A data.table with columns for group 1, group 2, deltaCCD, and
 #'   p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of

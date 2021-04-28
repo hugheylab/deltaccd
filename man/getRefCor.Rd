@@ -27,7 +27,7 @@ library('deltaccd')
 library('doParallel')
 library('doRNG')
 
-registerDoParallel(cores = 2)
+registerDoParallel(cores )
 set.seed(35813)
 
 refCor = getRefCor()

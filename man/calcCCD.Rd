@@ -40,6 +40,9 @@ is not provided.}
 
 \item{dopar}{Logical indicating whether to process features in parallel. Make
 sure to register a parallel backend first.}
+
+\item{scale}{Logical indicating whether to scale CCD by the number of gene
+pairs.}
 }
 \value{
 A data.table with columns for group name, CCD, and p-value.

@@ -43,6 +43,9 @@ is not provided.}
 
 \item{dopar}{Logical indicating whether to process features in parallel. Make
 sure to register a parallel backend first.}
+
+\item{scale}{Logical indicating whether to use scaled CCDs to calculate
+difference.}
 }
 \value{
 A data.table with columns for group 1, group 2, deltaCCD, and
