@@ -27,7 +27,7 @@ globalVariables(c('ii', 'groupNow', 'grp', 'group', '.', 'gene1', 'gene2',
 #' library('doParallel')
 #' library('doRNG')
 #'
-#' registerDoParallel(cores )
+#' registerDoParallel(cores = 2)
 #' set.seed(35813)
 #'
 #' refCor = getRefCor()
@@ -63,7 +63,6 @@ calcDist = function(r1, r2) sqrt(sum((r1 - r2)^2, na.rm = TRUE))
 
 
 calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
-  
   nPairs = choose(ncol(ref), 2)
   
   corVecRef = ref[upper.tri(ref)]
@@ -73,7 +72,6 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
   ccd = calcDist(corVecRef, corVecTest)
   
   if (isTRUE(scale)) {
-    
     ccd = ccd/nPairs}
   
   return(ccd)}
@@ -132,7 +130,10 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
 calcCCD = function(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
                    geneNames = NULL, dopar = FALSE, scale = FALSE) {
   method = 'spearman'
-  doOp = ifelse(dopar, `%dorng%`, `%do%`)
+  
+  if (isTRUE(dopar)) {
+    doOp = `%dorng%`
+  } else { doOp = `%do%` }
 
   if (missing(refCor)) {
     if (is.null(refEmat)) {
@@ -189,9 +190,7 @@ calcCCD = function(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
   return(result)}
 
 
-calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman'
-  , scale = FALSE) {
-  
+calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman', scale = FALSE) {
   d0 = calcCCDSimple(ref, emat[!idx, ], method = method, scale = scale)
   d1 = calcCCDSimple(ref, emat[idx, ], method = method, scale = scale)
   
@@ -201,7 +200,10 @@ calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman'
 
 
 makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
-  doOp = ifelse(dopar, `%dorng%`, `%do%`)
+  if (isTRUE(dopar)) {
+    doOp = `%dorng%`
+  } else { doOp = `%do%` }
+  
   doOp(foreach(ii = 1:nPerm, .combine = rbind), {
     sample(idx, length(idx))})}
 
@@ -264,7 +266,10 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
   nPerm = 1000, geneNames = NULL, dopar = FALSE, scale = FALSE) {
   
   method = 'spearman'
-  doOp = ifelse(dopar, `%dorng%`, `%do%`)
+  
+  if (isTRUE(dopar)) {
+    doOp = `%dorng%`
+  } else { doOp = `%do%` }
 
   if (missing(refCor)) {
     if (is.null(refEmat)) {
@@ -305,8 +310,8 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
 
       idxPerm = makePerms(idx2, nPerm = nPerm, dopar = dopar)
       deltaCcdRand = doOp(foreach(ii = 1:nrow(idxPerm), .combine = c), {
-        calcDeltaCCDSimple(refNow, ematNow, idxPerm[ii,], method = method
-                           , scale = scale)})
+        calcDeltaCCDSimple(refNow, ematNow, idxPerm[ii,], method = method, 
+                           scale = scale)})
 
       nComb = choose(length(idx2), sum(idx2))
       pvalue = statmod::permp(sum(deltaCcdRand >= deltaCcdObs),

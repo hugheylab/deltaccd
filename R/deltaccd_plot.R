@@ -1,28 +1,21 @@
 calcCorrSimple = function(dt, method = 'spearman') {
-  
   geneNames = setdiff(colnames(dt), 'group')
   
   dt1 = data.table(stats::cor(as.matrix(dt[, geneNames]), method = method),
                    gene1 = geneNames)
-  
   dt1 = data.table::melt(dt1, id.vars = 'gene1', measure.vars = 'gene2', 
                          value.name = 'rho')
-  
   dt1 = dt1[gene1 != gene2]
   
   return(dt1)}
 
 
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
-  
   dt = data.table(t(ematNow), group = groupVec)
   
   dtFinal = foreach(grp = groupVec, .combine = rbind) %do% {
-    
     dtTmp = calcCorrSimple(dt[group == grp], method = method)
-  
     return(dtTmp)}
-
   dtFinal[, gene1 := factor(gene1, rownames(ematNow))]
   dtFinal[, gene2 := factor(gene2, rev(rownames(ematNow)))]
   
@@ -157,9 +150,8 @@ plotRefHeatmap = function(refCor) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
   
   dt = data.table(refCor, gene1 = geneNames)
-  
-  dt = data.table::melt(dt, id.vars = 'gene1', measure.vars = 'gene2'
-    , value.name = 'rho')
+  dt = data.table::melt(dt, id.vars = 'gene1', measure.vars = 'gene2', 
+                        value.name = 'rho')
   dt = dt[gene1 != gene2]
   dt[, gene1 := factor(gene1, rownames(ematNow))]
   dt[, gene2 := factor(gene2, rev(rownames(ematNow)))]
