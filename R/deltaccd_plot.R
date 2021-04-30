@@ -1,33 +1,26 @@
-calcCorrSimple = function(dt, method = 'spearman') {
-  geneNames = setdiff(colnames(dt), 'group')
-  
-  dt1 = data.table(stats::cor(as.matrix(dt[, geneNames]), method = method),
-                   gene1 = geneNames)
-  dt1 = data.table::melt(dt1, id.vars = 'gene1', measure.vars = 'gene2', 
-                         value.name = 'rho')
-  dt1 = dt1[gene1 != gene2]
-  
-  return(dt1)}
-
-
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
   dt = data.table(t(ematNow), group = groupVec)
-  
-  dtFinal = foreach(grp = groupVec, .combine = rbind) %do% {
-    dtTmp = calcCorrSimple(dt[group == grp], method = method)
-    return(dtTmp)}
-  dtFinal[, gene1 := factor(gene1, rownames(ematNow))]
-  dtFinal[, gene2 := factor(gene2, rev(rownames(ematNow)))]
-  
-  return(dtFinal)}
-  
 
-calcColorLimits = function(vals, vLow = -1, vMid = 0, vHigh = 1,
-                           cLow = '#e66101', cMid = '#f7f7f7',
-                           cHigh = '#5e3c99') {
+  dt1 = dt[, data.table(stats::cor(.SD, method = method),
+                        gene1 = rownames(ematNow)),
+           by = group]
+
+  dt2 = data.table::melt(dt1, id.vars = c('group', 'gene1'),
+                         variable.name = 'gene2', value.name = 'rho')
+  dt2 = dt2[gene1 != gene2]
+
+  dt2[, gene1 := factor(gene1, rownames(ematNow))]
+  dt2[, gene2 := factor(gene2, rev(rownames(ematNow)))]
+  return(dt2[])}
+
+
+calcColorLimits = function(
+  vals, vLow = -1, vMid = 0, vHigh = 1, cLow = '#e66101', cMid = '#f7f7f7',
+  cHigh = '#5e3c99') {
+
   valRange = seq(0, 1, length.out = 201)
-  colorScale = scales::div_gradient_pal(low = cLow, mid = cMid,
-                                        high = cHigh)(valRange)
+  colorScale = scales::div_gradient_pal(
+    low = cLow, mid = cMid, high = cHigh)(valRange)
 
   minVal = (min(vals, na.rm = TRUE) - vLow) / (vHigh - vLow)
   idxLow = which.min(abs(minVal - valRange))
@@ -41,15 +34,15 @@ plotHeatmapSimple = function(ggObj, cLims) {
   p = ggObj +
     ggplot2::geom_tile(ggplot2::aes(x = gene1, y = gene2, fill = rho)) +
     ggplot2::labs(x = 'Gene', y = 'Gene') +
-    ggplot2::scale_fill_gradient2(low = cLims[1], mid = '#f7f7f7',
-                                  high = cLims[2], na.value = 'grey80') +
+    ggplot2::scale_fill_gradient2(
+      low = cLims[1], mid = '#f7f7f7', high = cLims[2], na.value = 'grey80') +
     ggplot2::theme_light() +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5,
-                                                       hjust = 1),
-                   strip.text = ggplot2::element_text(color = 'black'),
-                   axis.text = ggplot2::element_text(color = 'black'),
-                   legend.margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0,
-                                                   unit = 'cm'))}
+    ggplot2::theme(axis.text.x = ggplot2::element_text(
+      angle = 90, vjust = 0.5, hjust = 1),
+      strip.text = ggplot2::element_text(color = 'black'),
+      axis.text = ggplot2::element_text(color = 'black'),
+      legend.margin = ggplot2::margin(t = 0, r = 0, b = 0, l = 0, unit = 'cm'))
+  return(p)}
 
 
 #' Visualize gene co-expression.
@@ -81,8 +74,8 @@ plotHeatmapSimple = function(ggObj, cLims) {
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
-#'										'non-tumor', dopar = TRUE)
+#' deltaCcdResult = calcDeltaCCD(
+#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
 #'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
@@ -94,8 +87,8 @@ plotHeatmapSimple = function(ggObj, cLims) {
 plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   method = 'spearman'
 
-  ematNow = emat[geneNames,]
-  if (nrow(ematNow)<2) {
+  ematNow = emat[geneNames, ]
+  if (nrow(ematNow) < 2) {
     stop('Fewer than two genes in the supplied vector are in the expression matrix.')
   } else if (nrow(ematNow) < length(geneNames)) {
     warning(sprintf('%d gene(s) in the supplied vector is/are not in the expression matrix.',
@@ -110,8 +103,9 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
-  p = plotHeatmapSimple(ggplot2::ggplot(dt) + 
-                          ggplot2::facet_wrap(ggplot2::vars(group)), cLims)}
+  p = plotHeatmapSimple(
+    ggplot2::ggplot(dt) + ggplot2::facet_wrap(ggplot2::vars(group)), cLims)
+  return(p)}
 
 
 #' Visualize the reference pattern of gene co-expression.
@@ -135,8 +129,8 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
-#'                               'non-tumor', dopar = TRUE)
+#' deltaCcdResult = calcDeltaCCD(
+#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
 #'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
@@ -148,13 +142,14 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 plotRefHeatmap = function(refCor) {
   if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
-  
+
   dt = data.table(refCor, gene1 = geneNames)
-  dt = data.table::melt(dt, id.vars = 'gene1', measure.vars = 'gene2', 
-                        value.name = 'rho')
+  dt = data.table::melt(
+    dt, id.vars = 'gene1', measure.vars = 'gene2', value.name = 'rho')
   dt = dt[gene1 != gene2]
   dt[, gene1 := factor(gene1, rownames(ematNow))]
   dt[, gene2 := factor(gene2, rev(rownames(ematNow)))]
- 
+
   cLims = calcColorLimits(dt$rho)
-  p = plotHeatmapSimple(ggplot2::ggplot(dt), cLims)}
+  p = plotHeatmapSimple(ggplot2::ggplot(dt), cLims)
+  return(p)}
