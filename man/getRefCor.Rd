@@ -4,11 +4,17 @@
 \alias{getRefCor}
 \title{Retrieve the reference correlation matrix for clock gene co-expression.}
 \usage{
-getRefCor(species = "human", useEntrezGeneId = TRUE)
+getRefCor(
+  species = c("human", "mouse"),
+  tissue = c("pan", "blood"),
+  useEntrezGeneId = TRUE
+)
 }
 \arguments{
 \item{species}{Currently either 'human' or 'mouse'. Only affects the row and
 column names of the correlation matrix, not the actual values.}
+
+\item{tissue}{One of either 'pan' or 'blood'.}
 
 \item{useEntrezGeneId}{If \code{FALSE}, row and column names of correlation matrix
 will correspond to gene symbols (e.g., PER2).}

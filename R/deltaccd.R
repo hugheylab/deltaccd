@@ -50,7 +50,7 @@ getRefCor = function(species = c('human', 'mouse'),
   species =  match.arg(species)
   tissue = match.arg(tissue)
   
-  if (species == 'mouse' & tissue == 'blood') {
+  if (species == 'mouse' && tissue == 'blood') {
     stop('Blood reference is only available for species = \'human\'.')}
   
   if (species == 'human') {
@@ -70,7 +70,10 @@ getRefCor = function(species = c('human', 'mouse'),
     rownames(ref) = clockGenes[[colname]]
     colnames(ref) = rownames(ref)
   } else {
-    ref = refCorHumanBlood}
+    ref = refCorHumanBlood
+    
+    rownames(ref) = bloodGenes[[colname]]
+    colnames(ref) = rownames(ref)}
   
   return(ref)}
 
