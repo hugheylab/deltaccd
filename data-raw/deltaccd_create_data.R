@@ -12,7 +12,10 @@ clockGenes = cg
 refCorMouseEntrez = readRDS(file.path('data-raw', 'result_mouse_ref.rds'))
 refCorMouseEntrez = refCorMouseEntrez[cg$entrez_mm, cg$entrez_mm]
 
-devtools::use_data(clockGenes, refCorMouseEntrez, internal=TRUE, overwrite=TRUE)
+refCorHumanBlood = readRDS(file.path('data-raw', 'result_blood_ref.rds'))
+
+usethis::use_data(clockGenes, refCorMouseEntrez, refCorHumanBlood,
+                   internal=TRUE, overwrite=TRUE)
 
 ####################
 
@@ -26,4 +29,4 @@ groupVec = sampleMetadataGeo$condition[sampleMetadataGeo$study==studyNow]
 emat = ematListGeo[[studyNow]][,sampleMetadataGeo$sample[sampleMetadataGeo$study==studyNow]]
 GSE19188 = list(emat=emat, groupVec=groupVec)
 
-devtools::use_data(GSE19188, overwrite=TRUE)
+usethis::use_data(GSE19188, overwrite=TRUE)

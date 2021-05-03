@@ -17,6 +17,7 @@ globalVariables(c(
 #'
 #' @param species Currently either 'human' or 'mouse'. Only affects the row and
 #'   column names of the correlation matrix, not the actual values.
+#' @param tissue One of either 'pan' or 'blood'. 
 #' @param useEntrezGeneId If `FALSE`, row and column names of correlation matrix
 #'   will correspond to gene symbols (e.g., PER2).
 #'
@@ -43,7 +44,15 @@ globalVariables(c(
 #' @seealso [GSE19188], [plotRefHeatmap()], [calcCCD()], [calcDeltaCCD()]
 #'
 #' @export
-getRefCor = function(species = 'human', useEntrezGeneId = TRUE) {
+getRefCor = function(species = c('human', 'mouse'), 
+                     tissue = c('pan', 'blood'), 
+                     useEntrezGeneId = TRUE) {
+  species =  match.arg(species)
+  tissue = match.arg(tissue)
+  
+  if (species == 'mouse' & tissue == 'blood') {
+    stop('Blood reference is only available for species = \'human\'.')}
+  
   if (species == 'human') {
     if (useEntrezGeneId) {
       colname = 'entrez_hs'
@@ -54,9 +63,15 @@ getRefCor = function(species = 'human', useEntrezGeneId = TRUE) {
       colname = 'entrez_mm'
     } else {
       colname = 'symbol_mm'}}
-  ref = refCorMouseEntrez
-  rownames(ref) = clockGenes[[colname]]
-  colnames(ref) = rownames(ref)
+  
+  if (tissue == 'pan') {
+    ref = refCorMouseEntrez
+    
+    rownames(ref) = clockGenes[[colname]]
+    colnames(ref) = rownames(ref)
+  } else {
+    ref = refCorHumanBlood}
+  
   return(ref)}
 
 
@@ -187,8 +202,8 @@ calcCCD = function(
 
 
 calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman', scale = FALSE) {
-  d0 = calcCCDSimple(ref, emat[!idx, ], method = method, scale = scale)
-  d1 = calcCCDSimple(ref, emat[idx, ], method = method, scale = scale)
+  d0 = calcCCDSimple(ref, emat[, !idx], method = method, scale = scale)
+  d1 = calcCCDSimple(ref, emat[, idx], method = method, scale = scale)
   d = d1 - d0
   return(d)}
 

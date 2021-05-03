@@ -11,7 +11,7 @@ calcCorr = function(ematNow, groupVec, method = 'spearman') {
 
   dt2[, gene1 := factor(gene1, rownames(ematNow))]
   dt2[, gene2 := factor(gene2, rev(rownames(ematNow)))]
-  return(dt2[])}
+  return(dt2)}
 
 
 calcColorLimits = function(
