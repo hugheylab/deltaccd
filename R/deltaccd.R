@@ -53,27 +53,22 @@ getRefCor = function(species = c('human', 'mouse'),
   if (species == 'mouse' && tissue == 'blood') {
     stop('Blood reference is only available for species = \'human\'.')}
   
+  if (isTRUE(useEntrezGeneId)) {
+    prefix = 'entrez'
+  } else { prefix = 'symbol' }
   if (species == 'human') {
-    if (useEntrezGeneId) {
-      colname = 'entrez_hs'
-    } else {
-      colname = 'symbol_hs'}
-  } else if (species == 'mouse') {
-    if (useEntrezGeneId) {
-      colname = 'entrez_mm'
-    } else {
-      colname = 'symbol_mm'}}
+    suffix = 'hs'
+  } else { suffix = 'mm' }
+  colname = paste(prefix, suffix, sep = '_')
   
   if (tissue == 'pan') {
     ref = refCorMouseEntrez
-    
     rownames(ref) = clockGenes[[colname]]
-    colnames(ref) = rownames(ref)
   } else {
     ref = refCorHumanBlood
-    
-    rownames(ref) = bloodGenes[[colname]]
-    colnames(ref) = rownames(ref)}
+    rownames(ref) = bloodGenes[[colname]]}
+  
+  colnames(ref) = rownames(ref)
   
   return(ref)}
 
