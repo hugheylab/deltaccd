@@ -9,15 +9,17 @@ globalVariables(c(
   'geneNames', 'ematNow', '.SD'))
 
 
-#' Retrieve the reference correlation matrix for clock gene co-expression.
+#' Retrieve the reference correlation matrix for circadian gene co-expression.
 #'
-#' The reference matrix is based on a fixed-effects meta-analysis of eight
-#' circadian transcriptome datasets from mice, as described in
-#' [Shilts et al. 2018](https://doi.org/10.7717/peerj.4327).
+#' The pan-tissue reference matrix is based on a fixed-effects meta-analysis of
+#' eight circadian transcriptome datasets from mice, as described in
+#' [Shilts et al. 2018](https://doi.org/10.7717/peerj.4327). The human blood
+#' reference matrix is based an analysis of three microarray datasets
+#' (manuscript in preparation).
 #'
 #' @param species Currently either 'human' or 'mouse'. Only affects the row and
 #'   column names of the correlation matrix, not the actual values.
-#' @param tissue One of either 'pan' or 'blood'. 
+#' @param tissue One of either 'pan' or 'blood'.
 #' @param useEntrezGeneId If `FALSE`, row and column names of correlation matrix
 #'   will correspond to gene symbols (e.g., PER2).
 #'
@@ -44,32 +46,28 @@ globalVariables(c(
 #' @seealso [GSE19188], [plotRefHeatmap()], [calcCCD()], [calcDeltaCCD()]
 #'
 #' @export
-getRefCor = function(species = c('human', 'mouse'), 
-                     tissue = c('pan', 'blood'), 
-                     useEntrezGeneId = TRUE) {
+getRefCor = function(
+  species = c('human', 'mouse'), tissue = c('pan', 'blood'),
+  useEntrezGeneId = TRUE) {
+
   species =  match.arg(species)
   tissue = match.arg(tissue)
-  
+
   if (species == 'mouse' && tissue == 'blood') {
     stop('Blood reference is only available for species = \'human\'.')}
-  
-  if (isTRUE(useEntrezGeneId)) {
-    prefix = 'entrez'
-  } else { prefix = 'symbol' }
-  if (species == 'human') {
-    suffix = 'hs'
-  } else { suffix = 'mm' }
+
+  prefix = if (isTRUE(useEntrezGeneId)) 'entrez' else 'symbol'
+  suffix = if (species == 'human') 'hs' else 'mm'
   colname = paste(prefix, suffix, sep = '_')
-  
+
   if (tissue == 'pan') {
     ref = refCorMouseEntrez
     rownames(ref) = clockGenes[[colname]]
   } else {
     ref = refCorHumanBlood
     rownames(ref) = bloodGenes[[colname]]}
-  
+
   colnames(ref) = rownames(ref)
-  
   return(ref)}
 
 

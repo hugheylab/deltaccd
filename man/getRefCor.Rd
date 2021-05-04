@@ -2,7 +2,7 @@
 % Please edit documentation in R/deltaccd.R
 \name{getRefCor}
 \alias{getRefCor}
-\title{Retrieve the reference correlation matrix for clock gene co-expression.}
+\title{Retrieve the reference correlation matrix for circadian gene co-expression.}
 \usage{
 getRefCor(
   species = c("human", "mouse"),
@@ -23,9 +23,11 @@ will correspond to gene symbols (e.g., PER2).}
 A matrix of Spearman correlation values.
 }
 \description{
-The reference matrix is based on a fixed-effects meta-analysis of eight
-circadian transcriptome datasets from mice, as described in
-\href{https://doi.org/10.7717/peerj.4327}{Shilts et al. 2018}.
+The pan-tissue reference matrix is based on a fixed-effects meta-analysis of
+eight circadian transcriptome datasets from mice, as described in
+\href{https://doi.org/10.7717/peerj.4327}{Shilts et al. 2018}. The human blood
+reference matrix is based an analysis of three microarray datasets
+(manuscript in preparation).
 }
 \examples{
 \dontrun{
