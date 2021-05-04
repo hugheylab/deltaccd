@@ -1,21 +1,25 @@
 #' @importFrom foreach foreach %do% %dopar%
 #' @importFrom doRNG %dorng%
-#' @importFrom magrittr %>%
+#' @importFrom data.table data.table :=
 NULL
 
 
-globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2',
-                  'rho', 'group2Now', 'geneNames', 'ematNow'))
+globalVariables(c(
+  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now',
+  'geneNames', 'ematNow', '.SD'))
 
 
-#' Retrieve the reference correlation matrix for clock gene co-expression.
+#' Retrieve the reference correlation matrix for circadian gene co-expression.
 #'
-#' The reference matrix is based on a fixed-effects meta-analysis of eight
-#' circadian transcriptome datasets from mice, as described in
-#' [Shilts et al. 2018](https://doi.org/10.7717/peerj.4327).
+#' The pan-tissue reference matrix is based on a fixed-effects meta-analysis of
+#' eight circadian transcriptome datasets from mice, as described in
+#' [Shilts et al. 2018](https://doi.org/10.7717/peerj.4327). The human blood
+#' reference matrix is based an analysis of three microarray datasets
+#' (manuscript in preparation).
 #'
 #' @param species Currently either 'human' or 'mouse'. Only affects the row and
 #'   column names of the correlation matrix, not the actual values.
+#' @param tissue One of either 'pan' or 'blood'.
 #' @param useEntrezGeneId If `FALSE`, row and column names of correlation matrix
 #'   will correspond to gene symbols (e.g., PER2).
 #'
@@ -32,8 +36,8 @@ globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2',
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
-#'                               'non-tumor', dopar = TRUE)
+#' deltaCcdResult = calcDeltaCCD(
+#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
 #'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
@@ -42,19 +46,27 @@ globalVariables(c('ii', 'groupNow', 'group', '.', 'gene1', 'gene2',
 #' @seealso [GSE19188], [plotRefHeatmap()], [calcCCD()], [calcDeltaCCD()]
 #'
 #' @export
-getRefCor = function(species = 'human', useEntrezGeneId = TRUE) {
-  if (species == 'human') {
-    if (useEntrezGeneId) {
-      colname = 'entrez_hs'
-    } else {
-      colname = 'symbol_hs'}
-  } else if (species == 'mouse') {
-    if (useEntrezGeneId) {
-      colname = 'entrez_mm'
-    } else {
-      colname = 'symbol_mm'}}
-  ref = refCorMouseEntrez
-  rownames(ref) = clockGenes[[colname]]
+getRefCor = function(
+  species = c('human', 'mouse'), tissue = c('pan', 'blood'),
+  useEntrezGeneId = TRUE) {
+
+  species =  match.arg(species)
+  tissue = match.arg(tissue)
+
+  if (species == 'mouse' && tissue == 'blood') {
+    stop('Blood reference is only available for species = \'human\'.')}
+
+  prefix = if (isTRUE(useEntrezGeneId)) 'entrez' else 'symbol'
+  suffix = if (species == 'human') 'hs' else 'mm'
+  colname = paste(prefix, suffix, sep = '_')
+
+  if (tissue == 'pan') {
+    ref = refCorMouseEntrez
+    rownames(ref) = clockGenes[[colname]]
+  } else {
+    ref = refCorHumanBlood
+    rownames(ref) = bloodGenes[[colname]]}
+
   colnames(ref) = rownames(ref)
   return(ref)}
 
@@ -62,11 +74,17 @@ getRefCor = function(species = 'human', useEntrezGeneId = TRUE) {
 calcDist = function(r1, r2) sqrt(sum((r1 - r2)^2, na.rm = TRUE))
 
 
-calcCCDSimple = function(ref, emat, method = 'spearman') {
+calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
   corVecRef = ref[upper.tri(ref)]
   corMatTest = stats::cor(t(emat), method = method)
   corVecTest = corMatTest[upper.tri(corMatTest)]
-  return(calcDist(corVecRef, corVecTest))}
+  ccd = calcDist(corVecRef, corVecTest)
+
+  if (isTRUE(scale)) {
+    nPairs = choose(ncol(ref), 2)
+    ccd = ccd / nPairs}
+
+  return(ccd)}
 
 
 #' Calculate clock correlation distance (CCD).
@@ -93,8 +111,10 @@ calcCCDSimple = function(ref, emat, method = 'spearman') {
 #'   `emat`, and/or `refEmat` to use for calculating the CCD.
 #' @param dopar Logical indicating whether to process features in parallel. Make
 #'   sure to register a parallel backend first.
+#' @param scale Logical indicating whether to scale CCD by the number of gene
+#'   pairs.
 #'
-#' @return A data frame with columns for group name, CCD, and p-value.
+#' @return A data.table with columns for group name, CCD, and p-value.
 #'
 #' @examples
 #' \dontrun{
@@ -107,8 +127,8 @@ calcCCDSimple = function(ref, emat, method = 'spearman') {
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
-#'                               'non-tumor', dopar = TRUE)
+#' deltaCcdResult = calcDeltaCCD(
+#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
 #'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
@@ -117,10 +137,12 @@ calcCCDSimple = function(ref, emat, method = 'spearman') {
 #' @seealso [getRefCor()], [calcDeltaCCD()], [plotHeatmap()]
 #'
 #' @export
-calcCCD = function(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
-                   geneNames = NULL, dopar = FALSE) {
+calcCCD = function(
+  refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000, geneNames = NULL,
+  dopar = FALSE, scale = FALSE) {
+
   method = 'spearman'
-  doOp = ifelse(dopar, `%dorng%`, `%do%`)
+  doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
   if (missing(refCor)) {
     if (is.null(refEmat)) {
@@ -146,47 +168,47 @@ calcCCD = function(refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000,
 
   nComb = choose(nrow(emat), length(geneNames))
 
-  if (nPerm>1) {
+  if (nPerm > 1) {
     result = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
-      ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
-                             method = method)
 
-      ccdRand = doOp(foreach(ii = 1:nPerm, .combine = c), {
+      ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
+                             method = method, scale = scale)
+
+      ccdRand = doOp(foreach(i = 1:nPerm, .combine = c), {
         genesNow = rownames(emat)
         genesNowRand = genesNow[sample.int(length(genesNow))]
         idxRand = genesNowRand %in% geneNames
         calcCCDSimple(refNow, emat[idxRand, groupVec == groupNow],
-                      method = method)})
+                      method = method, scale = scale)})
 
       pvalue = statmod::permp(sum(ccdRand <= ccdObs), nperm = nPerm,
-                              total.nperm = nComb, twosided = FALSE,
-                              method = 'approximate')
-      data.frame(group = groupNow, CCD = ccdObs, Pvalue = pvalue,
-                 stringsAsFactors = FALSE)}
+        total.nperm = nComb, twosided = FALSE, method = 'approximate')
+
+      data.table(group = groupNow, CCD = ccdObs, Pvalue = pvalue)}
+
   } else {
     result = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
+
       ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
-                             method = method)
-      data.frame(group = groupNow, CCD = ccdObs, Pvalue = NA,
-                 stringsAsFactors = FALSE)}}
+                             method = method, scale = scale)
+
+      data.table(group = groupNow, CCD = ccdObs, Pvalue = NA)}}
 
   return(result)}
 
 
-calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman') {
-  corVecRef = ref[upper.tri(ref)]
-  corMat0 = stats::cor(t(emat[,!idx]), method = method)
-  corVec0 = corMat0[upper.tri(corMat0)]
-  corMat1 = stats::cor(t(emat[,idx]), method = method)
-  corVec1 = corMat1[upper.tri(corMat1)]
-  d = calcDist(corVecRef, corVec1) - calcDist(corVecRef, corVec0)
+calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman', scale = FALSE) {
+  d0 = calcCCDSimple(ref, emat[, !idx], method = method, scale = scale)
+  d1 = calcCCDSimple(ref, emat[, idx], method = method, scale = scale)
+  d = d1 - d0
   return(d)}
 
 
 makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
-  doOp = ifelse(dopar, `%dorng%`, `%do%`)
-  doOp(foreach(ii = 1:nPerm, .combine = rbind), {
-    sample(idx, length(idx))})}
+  doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
+  r = doOp(foreach(i = 1:nPerm, .combine = rbind), {
+    sample(idx, length(idx))})
+  return(r)}
 
 
 #' Calculate delta clock correlation distance.
@@ -215,8 +237,10 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #'   `emat`, and/or `refEmat` to use for calculating the CCD.
 #' @param dopar Logical indicating whether to process features in parallel. Make
 #'   sure to register a parallel backend first.
+#' @param scale Logical indicating whether to use scaled CCDs to calculate
+#'   difference.
 #'
-#' @return A data frame with columns for group 1, group 2, deltaCCD, and
+#' @return A data.table with columns for group 1, group 2, deltaCCD, and
 #'   p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
 #'   group 1, so group 1 corresponds to `groupNormal`.
 #'
@@ -231,8 +255,8 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #'
 #' refCor = getRefCor()
 #' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
-#'                               'non-tumor', dopar = TRUE)
+#' deltaCcdResult = calcDeltaCCD(
+#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
 #'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
@@ -241,10 +265,12 @@ makePerms = function(idx, nPerm = 1000, dopar = FALSE) {
 #' @seealso [getRefCor()], [calcCCD()], [plotHeatmap()]
 #'
 #' @export
-calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
-                        nPerm = 1000, geneNames = NULL, dopar = FALSE) {
+calcDeltaCCD = function(
+  refCor, emat, groupVec, groupNormal, refEmat = NULL, nPerm = 1000,
+  geneNames = NULL, dopar = FALSE, scale = FALSE) {
+
   method = 'spearman'
-  doOp = ifelse(dopar, `%dorng%`, `%do%`)
+  doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
   if (missing(refCor)) {
     if (is.null(refEmat)) {
@@ -272,37 +298,37 @@ calcDeltaCCD = function(refCor, emat, groupVec, groupNormal, refEmat = NULL,
     } else if (min(tt) < 3) {
       stop('Each unique group in groupVec must have at least three samples.')}}
 
-  result = data.frame(group1 = groupNormal,
-                      group2 = setdiff(sort(unique(groupVec)), groupNormal),
-                      stringsAsFactors = FALSE)
+  result = data.table(
+    group1 = groupNormal,
+    group2 = setdiff(sort(unique(groupVec)), groupNormal))
 
-  if (nPerm>1) {
+  if (nPerm > 1) {
     resultTmp = foreach(group2Now = result$group2, .combine = rbind) %do% {
       idx1 = groupVec %in% c(groupNormal, group2Now)
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
-      deltaCcdObs = calcDeltaCCDSimple(refNow, ematNow, idx2,
-                                       method = method)
+      deltaCcdObs = calcDeltaCCDSimple(
+        refNow, ematNow, idx2, method = method, scale = scale)
 
       idxPerm = makePerms(idx2, nPerm = nPerm, dopar = dopar)
-      deltaCcdRand = doOp(foreach(ii = 1:nrow(idxPerm), .combine = c), {
-        calcDeltaCCDSimple(refNow, ematNow, idxPerm[ii,], method = method)})
+      deltaCcdRand = doOp(foreach(i = 1:nrow(idxPerm), .combine = c), {
+        calcDeltaCCDSimple(
+          refNow, ematNow, idxPerm[i,], method = method, scale = scale)})
 
       nComb = choose(length(idx2), sum(idx2))
-      pvalue = statmod::permp(sum(deltaCcdRand >= deltaCcdObs),
-                              nperm = nPerm, total.nperm = nComb,
-                              twosided = FALSE, method = 'approximate')
-      data.frame(DeltaCCD = deltaCcdObs, Pvalue = pvalue,
-                 stringsAsFactors = FALSE)}
+      pvalue = statmod::permp(
+        sum(deltaCcdRand >= deltaCcdObs), nperm = nPerm, total.nperm = nComb,
+        twosided = FALSE, method = 'approximate')
+      data.table(DeltaCCD = deltaCcdObs, Pvalue = pvalue)}
+
   } else {
     resultTmp = foreach(group2Now = result$group2, .combine = rbind) %do% {
       idx1 = groupVec %in% c(groupNormal, group2Now)
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
-      deltaCcdObs = calcDeltaCCDSimple(refNow, ematNow, idx2,
-                                       method = method)
-      data.frame(DeltaCCD = deltaCcdObs, Pvalue = NA,
-                 stringsAsFactors = FALSE)}}
+      deltaCcdObs = calcDeltaCCDSimple(
+        refNow, ematNow, idx2, method = method, scale = scale)
+      data.table(DeltaCCD = deltaCcdObs, Pvalue = NA)}}
 
   result = cbind(result, resultTmp)
   return(result)}

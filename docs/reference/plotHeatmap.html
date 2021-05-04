@@ -73,7 +73,7 @@ selected genes in a dataset." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">deltaccd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -166,8 +166,8 @@ function or by <code><a href='plotRefHeatmap.html'>plotRefHeatmap()</a></code>.<
 
 <span class='va'>refCor</span> <span class='op'>=</span> <span class='fu'><a href='getRefCor.html'>getRefCor</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='va'>ccdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcCCD.html'>calcCCD</a></span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='va'>deltaCcdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcDeltaCCD.html'>calcDeltaCCD</a></span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>,
-                  <span class='st'>'non-tumor'</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>deltaCcdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcDeltaCCD.html'>calcDeltaCCD</a></span><span class='op'>(</span>
+  <span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, <span class='st'>'non-tumor'</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='va'>pRef</span> <span class='op'>=</span> <span class='fu'><a href='plotRefHeatmap.html'>plotRefHeatmap</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>
 <span class='va'>pTest</span> <span class='op'>=</span> <span class='fu'>plotHeatmap</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span><span class='op'>)</span>
@@ -185,7 +185,7 @@ function or by <code><a href='plotRefHeatmap.html'>plotRefHeatmap()</a></code>.<
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jake Hughey.</p>
+  <p>Developed by Jake Hughey, Elliot Outland.</p>
 </div>
 
 <div class="pkgdown">

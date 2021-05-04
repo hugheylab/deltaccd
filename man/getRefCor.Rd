@@ -2,13 +2,19 @@
 % Please edit documentation in R/deltaccd.R
 \name{getRefCor}
 \alias{getRefCor}
-\title{Retrieve the reference correlation matrix for clock gene co-expression.}
+\title{Retrieve the reference correlation matrix for circadian gene co-expression.}
 \usage{
-getRefCor(species = "human", useEntrezGeneId = TRUE)
+getRefCor(
+  species = c("human", "mouse"),
+  tissue = c("pan", "blood"),
+  useEntrezGeneId = TRUE
+)
 }
 \arguments{
 \item{species}{Currently either 'human' or 'mouse'. Only affects the row and
 column names of the correlation matrix, not the actual values.}
+
+\item{tissue}{One of either 'pan' or 'blood'.}
 
 \item{useEntrezGeneId}{If \code{FALSE}, row and column names of correlation matrix
 will correspond to gene symbols (e.g., PER2).}
@@ -17,9 +23,11 @@ will correspond to gene symbols (e.g., PER2).}
 A matrix of Spearman correlation values.
 }
 \description{
-The reference matrix is based on a fixed-effects meta-analysis of eight
-circadian transcriptome datasets from mice, as described in
-\href{https://doi.org/10.7717/peerj.4327}{Shilts et al. 2018}.
+The pan-tissue reference matrix is based on a fixed-effects meta-analysis of
+eight circadian transcriptome datasets from mice, as described in
+\href{https://doi.org/10.7717/peerj.4327}{Shilts et al. 2018}. The human blood
+reference matrix is based an analysis of three microarray datasets
+(manuscript in preparation).
 }
 \examples{
 \dontrun{
@@ -32,8 +40,8 @@ set.seed(35813)
 
 refCor = getRefCor()
 ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-deltaCcdResult = calcDeltaCCD(refCor, GSE19188$emat, GSE19188$groupVec,
-                              'non-tumor', dopar = TRUE)
+deltaCcdResult = calcDeltaCCD(
+  refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
 
 pRef = plotRefHeatmap(refCor)
 pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)

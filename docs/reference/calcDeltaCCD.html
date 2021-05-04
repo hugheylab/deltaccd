@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate clock correlation distance (CCD). — calcCCD • deltaccd</title>
+<title>Calculate delta clock correlation distance. — calcDeltaCCD • deltaccd</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,11 @@
 
 
 
-<meta property="og:title" content="Calculate clock correlation distance (CCD). — calcCCD" />
-<meta property="og:description" content="Quantify the similarity of gene co-expression between a reference and a test
-dataset. Statistical significance is calculated using permutation of the
-genes." />
+<meta property="og:title" content="Calculate delta clock correlation distance. — calcDeltaCCD" />
+<meta property="og:description" content="Calculate the difference between the clock correlation distances (CCDs),
+relative to a reference, for two groups of samples. Statistical significance
+is calculated using permutation of the samples that belong to either of those
+two groups." />
 
 
 
@@ -74,7 +75,7 @@ genes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">deltaccd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -113,25 +114,28 @@ genes." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate clock correlation distance (CCD).</h1>
+    <h1>Calculate delta clock correlation distance.</h1>
     <small class="dont-index">Source: <a href='https://github.com/hugheylab/deltaccd/blob/master/R/deltaccd.R'><code>R/deltaccd.R</code></a></small>
-    <div class="hidden name"><code>calcCCD.Rd</code></div>
+    <div class="hidden name"><code>calcDeltaCCD.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Quantify the similarity of gene co-expression between a reference and a test
-dataset. Statistical significance is calculated using permutation of the
-genes.</p>
+    <p>Calculate the difference between the clock correlation distances (CCDs),
+relative to a reference, for two groups of samples. Statistical significance
+is calculated using permutation of the samples that belong to either of those
+two groups.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calcCCD</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>calcDeltaCCD</span><span class='op'>(</span>
   <span class='va'>refCor</span>,
   <span class='va'>emat</span>,
-  groupVec <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>groupVec</span>,
+  <span class='va'>groupNormal</span>,
   refEmat <span class='op'>=</span> <span class='cn'>NULL</span>,
   nPerm <span class='op'>=</span> <span class='fl'>1000</span>,
   geneNames <span class='op'>=</span> <span class='cn'>NULL</span>,
-  dopar <span class='op'>=</span> <span class='cn'>FALSE</span>
+  dopar <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  scale <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -144,17 +148,21 @@ from <code><a href='getRefCor.html'>getRefCor()</a></code>. Should contain Spear
     </tr>
     <tr>
       <th>emat</th>
-      <td><p>Matrix of expression values, where each row corresponds to a
-gene and each column corresponds to a sample. The rownames and colnames of
+      <td><p>Matrix of expression values, where each row corresponds to a gene
+and each column corresponds to a sample. The rownames and colnames of
 <code>refCor</code> should be present in the rownames of <code>emat</code>. For the p-value
 calculation, it is important that <code>emat</code> include all measured genes, not
 just those in <code>refCor</code>.</p></td>
     </tr>
     <tr>
       <th>groupVec</th>
-      <td><p>Optional vector indicating the group to which group each
-sample belongs. If not provided, the function assumes all samples belong to
-the same group.</p></td>
+      <td><p>Vector indicating the group to which group each sample
+belongs. It's ok for groupVec to have more than two groups.</p></td>
+    </tr>
+    <tr>
+      <th>groupNormal</th>
+      <td><p>Value indicating the group in groupVec that corresponds to
+normal or healthy. Other groups will be compared to this group.</p></td>
     </tr>
     <tr>
       <th>refEmat</th>
@@ -176,14 +184,21 @@ is not provided.</p></td>
       <td><p>Logical indicating whether to process features in parallel. Make
 sure to register a parallel backend first.</p></td>
     </tr>
+    <tr>
+      <th>scale</th>
+      <td><p>Logical indicating whether to use scaled CCDs to calculate
+difference.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns for group name, CCD, and p-value.</p>
+    <p>A data.table with columns for group 1, group 2, deltaCCD, and
+p-value. In each row, the deltaCCD is the CCD of group 2 minus the CCD of
+group 1, so group 1 corresponds to <code>groupNormal</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='getRefCor.html'>getRefCor()</a></code>, <code><a href='calcDeltaCCD.html'>calcDeltaCCD()</a></code>, <code><a href='plotHeatmap.html'>plotHeatmap()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='getRefCor.html'>getRefCor()</a></code>, <code><a href='calcCCD.html'>calcCCD()</a></code>, <code><a href='plotHeatmap.html'>plotHeatmap()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
@@ -195,9 +210,9 @@ sure to register a parallel backend first.</p></td>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>35813</span><span class='op'>)</span>
 
 <span class='va'>refCor</span> <span class='op'>=</span> <span class='fu'><a href='getRefCor.html'>getRefCor</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>ccdResult</span> <span class='op'>=</span> <span class='fu'>calcCCD</span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='va'>deltaCcdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcDeltaCCD.html'>calcDeltaCCD</a></span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>,
-                              <span class='st'>'non-tumor'</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>ccdResult</span> <span class='op'>=</span> <span class='fu'><a href='calcCCD.html'>calcCCD</a></span><span class='op'>(</span><span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>deltaCcdResult</span> <span class='op'>=</span> <span class='fu'>calcDeltaCCD</span><span class='op'>(</span>
+  <span class='va'>refCor</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span>, <span class='st'>'non-tumor'</span>, dopar <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='va'>pRef</span> <span class='op'>=</span> <span class='fu'><a href='plotRefHeatmap.html'>plotRefHeatmap</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>
 <span class='va'>pTest</span> <span class='op'>=</span> <span class='fu'><a href='plotHeatmap.html'>plotHeatmap</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>refCor</span><span class='op'>)</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>emat</span>, <span class='va'>GSE19188</span><span class='op'>$</span><span class='va'>groupVec</span><span class='op'>)</span>
@@ -215,7 +230,7 @@ sure to register a parallel backend first.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Jake Hughey.</p>
+  <p>Developed by Jake Hughey, Elliot Outland.</p>
 </div>
 
 <div class="pkgdown">
