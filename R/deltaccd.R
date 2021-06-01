@@ -5,8 +5,7 @@ NULL
 
 
 globalVariables(c(
-  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now',
-  'geneNames', 'ematNow', '.SD'))
+  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now', '.SD'))
 
 
 #' Retrieve the reference correlation matrix for circadian gene co-expression.
