@@ -1,3 +1,6 @@
+# deltaccd 0.2.2
+* Updated gene symbol.
+
 # deltaccd 0.2.1
 * Fixed bugs in `plotRefHeatmap()`.
 * Ordered genes in human blood reference to make heatmap more interpretable.
