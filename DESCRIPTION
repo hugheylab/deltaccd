@@ -24,7 +24,6 @@ Imports:
   statmod (>= 1.4.30),
   data.table (>= 1.14.0)
 Suggests:
-  covr,
   doParallel (>= 1.0.11),
   knitr,
   rmarkdown
