@@ -142,10 +142,12 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 plotRefHeatmap = function(refCor) {
   if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
+  
+  geneNames = rownames(refCor)
 
   dt = data.table(refCor, gene1 = geneNames)
   dt = data.table::melt(
-    dt, id.vars = 'gene1', measure.vars = 'gene2', value.name = 'rho')
+    dt, id.vars = 'gene1', measure.vars = geneNames, value.name = 'rho')
   dt = dt[gene1 != gene2]
   dt[, gene1 := factor(gene1, rownames(ematNow))]
   dt[, gene2 := factor(gene2, rev(rownames(ematNow)))]

@@ -1,12 +1,12 @@
 #' @importFrom foreach foreach %do% %dopar%
 #' @importFrom doRNG %dorng%
-#' @importFrom data.table data.table :=
+#' @importFrom data.table data.table as.data.table setnames :=
 NULL
 
 
 globalVariables(c(
   'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now',
-  'geneNames', 'ematNow', '.SD'))
+  'geneNames', 'ematNow', '.SD', 'variance'))
 
 
 #' Retrieve the reference correlation matrix for circadian gene co-expression.
@@ -152,12 +152,9 @@ calcCCD = function(
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
   geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  refNow = refCor[geneNames, geneNames]
-  if (length(geneNames) < 2) {
-    stop('Fewer than two genes in the reference are in the expression matrix.')
-  } else if (length(geneNames) < nrow(refCor)) {
-    warning(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
-                    nrow(refCor) - length(geneNames)))}
+  if (length(geneNames) < nrow(refCor)) {
+    stop(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
+                 nrow(refCor) - length(geneNames)))}
 
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
@@ -165,20 +162,36 @@ calcCCD = function(
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
+  
+  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
+    
+    varMat = apply(emat[geneNames, groupVec == groupNow], MARGIN = 1, 
+                   FUN = stats::var, na.rm = TRUE)
+    varDt = as.data.table(varMat, keep.rownames = 'gene')
+    setnames(varDt, 'varMat', 'variance')
+    varDt[, group := groupNow]
+    
+    zeroVar = varDt[variance == 0]
+    
+    return(zeroVar)}
+  
+  if (nrow(varCheck) > 0) {
+    stop('Zero variance in the following gene-group pairs:\n', 
+         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
 
   nComb = choose(nrow(emat), length(geneNames))
 
   if (nPerm > 1) {
     result = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
 
-      ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
+      ccdObs = calcCCDSimple(refCor, emat[geneNames, groupVec == groupNow],
                              method = method, scale = scale)
 
       ccdRand = doOp(foreach(i = 1:nPerm, .combine = c), {
         genesNow = rownames(emat)
         genesNowRand = genesNow[sample.int(length(genesNow))]
         idxRand = genesNowRand %in% geneNames
-        calcCCDSimple(refNow, emat[idxRand, groupVec == groupNow],
+        calcCCDSimple(refCor, emat[idxRand, groupVec == groupNow],
                       method = method, scale = scale)})
 
       pvalue = statmod::permp(sum(ccdRand <= ccdObs), nperm = nPerm,
@@ -189,7 +202,7 @@ calcCCD = function(
   } else {
     result = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
 
-      ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
+      ccdObs = calcCCDSimple(refCor, emat[geneNames, groupVec == groupNow],
                              method = method, scale = scale)
 
       data.table(group = groupNow, CCD = ccdObs, Pvalue = NA)}}
@@ -280,12 +293,9 @@ calcDeltaCCD = function(
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
   geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  refNow = refCor[geneNames, geneNames]
-  if (length(geneNames) < 2) {
-    stop('Fewer than two genes in the reference are in the expression matrix.')
-  } else if (length(geneNames) < nrow(refCor)) {
-    warning(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
-                    nrow(refCor) - length(geneNames)))}
+  if (length(geneNames) < nrow(refCor)) {
+    stop(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
+                 nrow(refCor) - length(geneNames)))}
 
   if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
@@ -297,6 +307,22 @@ calcDeltaCCD = function(
       stop('groupVec contains only one unique group.')
     } else if (min(tt) < 3) {
       stop('Each unique group in groupVec must have at least three samples.')}}
+  
+  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
+    
+    varMat = apply(emat[geneNames, groupVec == groupNow], MARGIN = 1, 
+                   FUN = stats::var, na.rm = TRUE)
+    varDt = as.data.table(varMat, keep.rownames = 'gene')
+    setnames(varDt, 'varMat', 'variance')
+    varDt[, group := groupNow]
+    
+    zeroVar = varDt[variance == 0]
+    
+    return(zeroVar)}
+  
+  if (nrow(varCheck) > 0) {
+    stop('Zero variance in the following gene-group pairs:\n', 
+         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
 
   result = data.table(
     group1 = groupNormal,
@@ -308,12 +334,12 @@ calcDeltaCCD = function(
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
       deltaCcdObs = calcDeltaCCDSimple(
-        refNow, ematNow, idx2, method = method, scale = scale)
+        refCor, ematNow, idx2, method = method, scale = scale)
 
       idxPerm = makePerms(idx2, nPerm = nPerm, dopar = dopar)
       deltaCcdRand = doOp(foreach(i = 1:nrow(idxPerm), .combine = c), {
         calcDeltaCCDSimple(
-          refNow, ematNow, idxPerm[i,], method = method, scale = scale)})
+          refCor, ematNow, idxPerm[i,], method = method, scale = scale)})
 
       nComb = choose(length(idx2), sum(idx2))
       pvalue = statmod::permp(
@@ -327,7 +353,7 @@ calcDeltaCCD = function(
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
       deltaCcdObs = calcDeltaCCDSimple(
-        refNow, ematNow, idx2, method = method, scale = scale)
+        refCor, ematNow, idx2, method = method, scale = scale)
       data.table(DeltaCCD = deltaCcdObs, Pvalue = NA)}}
 
   result = cbind(result, resultTmp)
