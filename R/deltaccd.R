@@ -117,13 +117,15 @@ checkGenes = function(emat, refCor) {
   return(geneNames)}
 
 
-checkRefCor = function(refCor, refEmat = NULL, method = 'spearman') {
+checkRefCor = function(refCor, refEmat = NULL, geneNames = NULL, method = 'spearman') {
   if (missing(refCor)) {
     if (is.null(refEmat)) {
       stop('Either refCor or refEmat must be supplied.')}
     refCor = stats::cor(t(refEmat[geneNames,]), method = method)
   } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
-    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}}
+    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
+  
+  return(refCor)}
 
 
 #' Calculate clock correlation distance (CCD).
@@ -183,9 +185,10 @@ calcCCD = function(
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-  checkCor(refCor, refEmat, method)
 
+  refCor = checkRefCor(refCor, refEmat, geneNames, method)
   geneNames = checkGenes(emat, refCor)
+  
 
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
@@ -194,7 +197,7 @@ calcCCD = function(
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
   
-  varCheck = checkVar(emat[geneNames, ], groupVec)
+  checkVar(emat[geneNames, ], groupVec)
 
   nComb = choose(nrow(emat), length(geneNames))
 
@@ -302,10 +305,9 @@ calcDeltaCCD = function(
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-  checkRefCor(refCor, refEmat, method = method)
-
+  refCor = checkRefCor(refCor, refEmat, geneNames, method)
   geneNames = checkGenes(emat, refCor)
-
+ 
   if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (!(groupNormal %in% groupVec)) {
@@ -317,7 +319,7 @@ calcDeltaCCD = function(
     } else if (min(tt) < 3) {
       stop('Each unique group in groupVec must have at least three samples.')}}
   
-  varCheck = checkVar(emat[geneNames, ], groupVec)
+  checkVar(emat[geneNames, ], groupVec)
 
   result = data.table(
     group1 = groupNormal,
