@@ -102,7 +102,9 @@ checkVar = function(emat, groupVec) {
     
     return(zeroVar)}
   
-  return(varCheck)}
+  if (nrow(varCheck) > 0) {
+    stop('Zero variance in the following gene-group pairs:\n', 
+         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}}
 
 
 checkGenes = function(emat, refCor) {
@@ -110,8 +112,18 @@ checkGenes = function(emat, refCor) {
   if (length(geneNames) < nrow(refCor)) {
     missingGenes = setdiff(rownames(refCor), geneNames)
     stop(paste0('The following gene(s) is/are not in the expression matrix: \n',
-                paste0(missingGenes, collapse = '\n')))
-    } else { return(geneNames) }}
+                paste0(missingGenes, collapse = '\n')))} 
+  
+  return(geneNames)}
+
+
+checkRefCor = function(refCor, refEmat = NULL, method = 'spearman') {
+  if (missing(refCor)) {
+    if (is.null(refEmat)) {
+      stop('Either refCor or refEmat must be supplied.')}
+    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
+  } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
+    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}}
 
 
 #' Calculate clock correlation distance (CCD).
@@ -171,12 +183,7 @@ calcCCD = function(
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-  if (missing(refCor)) {
-    if (is.null(refEmat)) {
-      stop('Either refCor or refEmat must be supplied.')}
-    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
-  } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
-    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
+  checkCor(refCor, refEmat, method)
 
   geneNames = checkGenes(emat, refCor)
 
@@ -188,10 +195,6 @@ calcCCD = function(
     stop('Each unique group in groupVec must have at least three samples.')}
   
   varCheck = checkVar(emat[geneNames, ], groupVec)
-  
-  if (nrow(varCheck) > 0) {
-    stop('Zero variance in the following gene-group pairs:\n', 
-         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
 
   nComb = choose(nrow(emat), length(geneNames))
 
@@ -299,12 +302,7 @@ calcDeltaCCD = function(
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-  if (missing(refCor)) {
-    if (is.null(refEmat)) {
-      stop('Either refCor or refEmat must be supplied.')}
-    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
-  } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
-    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
+  checkRefCor(refCor, refEmat, method = method)
 
   geneNames = checkGenes(emat, refCor)
 
@@ -320,10 +318,6 @@ calcDeltaCCD = function(
       stop('Each unique group in groupVec must have at least three samples.')}}
   
   varCheck = checkVar(emat[geneNames, ], groupVec)
-
-  if (nrow(varCheck) > 0) {
-    stop('Zero variance in the following gene-group pairs:\n', 
-         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
 
   result = data.table(
     group1 = groupNormal,
