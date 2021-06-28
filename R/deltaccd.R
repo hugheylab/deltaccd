@@ -1,6 +1,6 @@
 #' @importFrom foreach foreach %do% %dopar%
 #' @importFrom doRNG %dorng%
-#' @importFrom data.table data.table as.data.table setnames :=
+#' @importFrom data.table data.table :=
 NULL
 
 
@@ -87,6 +87,33 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
   return(ccd)}
 
 
+checkVar = function(emat, groupVec) {
+  
+  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
+    
+    varMat = apply(emat[, groupVec == groupNow], MARGIN = 1, 
+                   FUN = stats::var, na.rm = TRUE)
+    varDt = data.table::as.data.table(varMat, keep.rownames = 'gene')
+    data.table::setnames(varDt, 'varMat', 'variance')
+    varDt[, group := groupNow]
+    
+    zeroVar = varDt[variance == 0]
+    zeroVar[, variance := NULL]
+    
+    return(zeroVar)}
+  
+  return(varCheck)}
+
+
+checkGenes = function(emat, refCor) {
+  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
+  if (length(geneNames) < nrow(refCor)) {
+    missingGenes = setdiff(rownames(refCor), geneNames)
+    stop(paste0('The following gene(s) is/are not in the expression matrix: \n',
+                paste0(missingGenes, collapse = '\n')))
+    } else { return(geneNames) }}
+
+
 #' Calculate clock correlation distance (CCD).
 #'
 #' Quantify the similarity of gene co-expression between a reference and a test
@@ -151,10 +178,7 @@ calcCCD = function(
   } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
-  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  if (length(geneNames) < nrow(refCor)) {
-    stop(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
-                 nrow(refCor) - length(geneNames)))}
+  geneNames = checkGenes(emat, refCor)
 
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
@@ -163,17 +187,7 @@ calcCCD = function(
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
   
-  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
-    
-    varMat = apply(emat[geneNames, groupVec == groupNow], MARGIN = 1, 
-                   FUN = stats::var, na.rm = TRUE)
-    varDt = as.data.table(varMat, keep.rownames = 'gene')
-    setnames(varDt, 'varMat', 'variance')
-    varDt[, group := groupNow]
-    
-    zeroVar = varDt[variance == 0]
-    
-    return(zeroVar)}
+  varCheck = checkVar(emat[geneNames, ], groupVec)
   
   if (nrow(varCheck) > 0) {
     stop('Zero variance in the following gene-group pairs:\n', 
@@ -292,10 +306,7 @@ calcDeltaCCD = function(
   } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
-  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  if (length(geneNames) < nrow(refCor)) {
-    stop(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
-                 nrow(refCor) - length(geneNames)))}
+  geneNames = checkGenes(emat, refCor)
 
   if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
@@ -308,18 +319,8 @@ calcDeltaCCD = function(
     } else if (min(tt) < 3) {
       stop('Each unique group in groupVec must have at least three samples.')}}
   
-  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
-    
-    varMat = apply(emat[geneNames, groupVec == groupNow], MARGIN = 1, 
-                   FUN = stats::var, na.rm = TRUE)
-    varDt = as.data.table(varMat, keep.rownames = 'gene')
-    setnames(varDt, 'varMat', 'variance')
-    varDt[, group := groupNow]
-    
-    zeroVar = varDt[variance == 0]
-    
-    return(zeroVar)}
-  
+  varCheck = checkVar(emat[geneNames, ], groupVec)
+
   if (nrow(varCheck) > 0) {
     stop('Zero variance in the following gene-group pairs:\n', 
          paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
