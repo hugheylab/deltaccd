@@ -97,10 +97,8 @@ checkVar = function(emat, groupVec) {
     data.table::setnames(varDt, 'varMat', 'variance')
     varDt[, group := groupNow]
     
-    zeroVar = varDt[variance == 0]
-    zeroVar[, variance := NULL]
-    
-    return(zeroVar)}
+    zeroVar = varDt[variance == 0]}
+  varCheck[, variance := NULL]  
   
   if (nrow(varCheck) > 0) {
     stop('Zero variance in the following gene-group pairs:\n', 
@@ -197,7 +195,7 @@ calcCCD = function(
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
   
-  checkVar(emat[geneNames, ], groupVec)
+  checkVar(emat, groupVec)
 
   nComb = choose(nrow(emat), length(geneNames))
 
