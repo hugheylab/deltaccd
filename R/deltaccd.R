@@ -91,10 +91,10 @@ checkVar = function(emat, groupVec) {
   
   varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
     
-    varMat = apply(emat[, groupVec == groupNow], MARGIN = 1, 
+    varVec = apply(emat[, groupVec == groupNow, drop = FALSE], MARGIN = 1, 
                    FUN = stats::var, na.rm = TRUE)
-    varDt = data.table::as.data.table(varMat, keep.rownames = 'gene')
-    data.table::setnames(varDt, 'varMat', 'variance')
+    varDt = data.table::as.data.table(varVec, keep.rownames = 'gene')
+    data.table::setnames(varDt, 'varVec', 'variance')
     varDt[, group := groupNow]
     
     zeroVar = varDt[variance == 0]}
