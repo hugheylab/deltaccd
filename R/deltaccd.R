@@ -195,7 +195,9 @@ calcCCD = function(
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
   
-  checkVar(emat, groupVec)
+  if (nPerm > 1) {
+    checkVar(emat, groupVec)
+  } else { checkVar(emat[geneNames, ]) }
 
   nComb = choose(nrow(emat), length(geneNames))
 
