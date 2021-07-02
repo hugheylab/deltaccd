@@ -1,6 +1,14 @@
-# deltaccd 0.2.1
+# deltaccd 0.2.3
 * Modified `calcCCD` and `calcDeltaCCD` to throw errors for genes with zero group-wise variance.
 * `calcCCD` and `calcDeltaCCD` now require all genes from the reference to be present in the expression matrix passed to `emat`.
+
+# deltaccd 0.2.2
+* Updated gene symbol.
+
+# deltaccd 0.2.1
+* Fixed bugs in `plotRefHeatmap()`.
+* Ordered genes in human blood reference to make heatmap more interpretable.
+>>>>>>> origin/master
 
 # deltaccd 0.2.0
 * Modified `calcCorr()`, `calcCCD()`, `calcDeltaCCD()` to use data.table.

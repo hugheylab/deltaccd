@@ -145,9 +145,12 @@ plotRefHeatmap = function(refCor) {
   
   geneNames = rownames(refCor)
 
-  dt = data.table(refCor, gene1 = geneNames)
+  dt = data.table(refCor, gene1 = rownames(refCor))
   dt = data.table::melt(
-    dt, id.vars = 'gene1', variable.name = 'gene2', value.name = 'rho')
+    dt, id.vars = 'gene1', variable.name = 'gene2', variable.factor = FALSE,
+    value.name = 'rho')
+  dt = dt[gene1 != gene2]
+  
   dt[, gene1 := factor(gene1, rownames(refCor))]
   dt[, gene2 := factor(gene2, rev(rownames(refCor)))]
 
