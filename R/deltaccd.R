@@ -5,7 +5,8 @@ NULL
 
 
 globalVariables(c(
-  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now', '.SD'))
+  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now',
+  '.SD', 'variance'))
 
 
 #' Retrieve the reference correlation matrix for circadian gene co-expression.
@@ -86,6 +87,45 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
   return(ccd)}
 
 
+checkVar = function(emat, groupVec) {
+  
+  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
+    
+    varVec = apply(emat[, groupVec == groupNow, drop = FALSE], MARGIN = 1, 
+                   FUN = stats::var, na.rm = TRUE)
+    varDt = data.table::as.data.table(varVec, keep.rownames = 'gene')
+    data.table::setnames(varDt, 'varVec', 'variance')
+    varDt[, group := groupNow]
+    
+    zeroVar = varDt[variance == 0]}
+  varCheck[, variance := NULL]  
+  
+  if (nrow(varCheck) > 0) {
+    stop('Zero variance in the following gene-group pairs:\n', 
+         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}}
+
+
+checkGenes = function(emat, refCor) {
+  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
+  if (length(geneNames) < nrow(refCor)) {
+    missingGenes = setdiff(rownames(refCor), geneNames)
+    stop(paste0('The following gene(s) is/are not in the expression matrix: \n',
+                paste0(missingGenes, collapse = '\n')))} 
+  
+  return(geneNames)}
+
+
+checkRefCor = function(refCor, refEmat = NULL, geneNames = NULL, method = 'spearman') {
+  if (missing(refCor)) {
+    if (is.null(refEmat)) {
+      stop('Either refCor or refEmat must be supplied.')}
+    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
+  } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
+    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
+  
+  return(refCor)}
+
+
 #' Calculate clock correlation distance (CCD).
 #'
 #' Quantify the similarity of gene co-expression between a reference and a test
@@ -143,20 +183,10 @@ calcCCD = function(
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-  if (missing(refCor)) {
-    if (is.null(refEmat)) {
-      stop('Either refCor or refEmat must be supplied.')}
-    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
-  } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
-    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 
-  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  refNow = refCor[geneNames, geneNames]
-  if (length(geneNames) < 2) {
-    stop('Fewer than two genes in the reference are in the expression matrix.')
-  } else if (length(geneNames) < nrow(refCor)) {
-    warning(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
-                    nrow(refCor) - length(geneNames)))}
+  refCor = checkRefCor(refCor, refEmat, geneNames, method)
+  geneNames = checkGenes(emat, refCor)
+  
 
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
@@ -164,20 +194,24 @@ calcCCD = function(
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
+  
+  if (nPerm > 1) {
+    checkVar(emat, groupVec)
+  } else { checkVar(emat[geneNames, ]) }
 
   nComb = choose(nrow(emat), length(geneNames))
 
   if (nPerm > 1) {
     result = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
 
-      ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
+      ccdObs = calcCCDSimple(refCor, emat[geneNames, groupVec == groupNow],
                              method = method, scale = scale)
 
       ccdRand = doOp(foreach(i = 1:nPerm, .combine = c), {
         genesNow = rownames(emat)
         genesNowRand = genesNow[sample.int(length(genesNow))]
         idxRand = genesNowRand %in% geneNames
-        calcCCDSimple(refNow, emat[idxRand, groupVec == groupNow],
+        calcCCDSimple(refCor, emat[idxRand, groupVec == groupNow],
                       method = method, scale = scale)})
 
       pvalue = statmod::permp(sum(ccdRand <= ccdObs), nperm = nPerm,
@@ -188,7 +222,7 @@ calcCCD = function(
   } else {
     result = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
 
-      ccdObs = calcCCDSimple(refNow, emat[geneNames, groupVec == groupNow],
+      ccdObs = calcCCDSimple(refCor, emat[geneNames, groupVec == groupNow],
                              method = method, scale = scale)
 
       data.table(group = groupNow, CCD = ccdObs, Pvalue = NA)}}
@@ -271,21 +305,9 @@ calcDeltaCCD = function(
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-  if (missing(refCor)) {
-    if (is.null(refEmat)) {
-      stop('Either refCor or refEmat must be supplied.')}
-    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
-  } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
-    stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
-
-  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  refNow = refCor[geneNames, geneNames]
-  if (length(geneNames) < 2) {
-    stop('Fewer than two genes in the reference are in the expression matrix.')
-  } else if (length(geneNames) < nrow(refCor)) {
-    warning(sprintf('%d gene(s) in reference is/are not in the expression matrix.',
-                    nrow(refCor) - length(geneNames)))}
-
+  refCor = checkRefCor(refCor, refEmat, geneNames, method)
+  geneNames = checkGenes(emat, refCor)
+ 
   if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (!(groupNormal %in% groupVec)) {
@@ -296,6 +318,8 @@ calcDeltaCCD = function(
       stop('groupVec contains only one unique group.')
     } else if (min(tt) < 3) {
       stop('Each unique group in groupVec must have at least three samples.')}}
+  
+  checkVar(emat[geneNames, ], groupVec)
 
   result = data.table(
     group1 = groupNormal,
@@ -307,12 +331,12 @@ calcDeltaCCD = function(
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
       deltaCcdObs = calcDeltaCCDSimple(
-        refNow, ematNow, idx2, method = method, scale = scale)
+        refCor, ematNow, idx2, method = method, scale = scale)
 
       idxPerm = makePerms(idx2, nPerm = nPerm, dopar = dopar)
       deltaCcdRand = doOp(foreach(i = 1:nrow(idxPerm), .combine = c), {
         calcDeltaCCDSimple(
-          refNow, ematNow, idxPerm[i,], method = method, scale = scale)})
+          refCor, ematNow, idxPerm[i,], method = method, scale = scale)})
 
       nComb = choose(length(idx2), sum(idx2))
       pvalue = statmod::permp(
@@ -326,7 +350,7 @@ calcDeltaCCD = function(
       idx2 = groupVec[idx1] == group2Now
       ematNow = emat[geneNames, idx1]
       deltaCcdObs = calcDeltaCCDSimple(
-        refNow, ematNow, idx2, method = method, scale = scale)
+        refCor, ematNow, idx2, method = method, scale = scale)
       data.table(DeltaCCD = deltaCcdObs, Pvalue = NA)}}
 
   result = cbind(result, resultTmp)
