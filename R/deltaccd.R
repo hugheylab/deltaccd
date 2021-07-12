@@ -5,8 +5,7 @@ NULL
 
 
 globalVariables(c(
-  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now',
-  'geneNames', 'ematNow', '.SD', 'variance'))
+  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now', '.SD'))
 
 
 #' Retrieve the reference correlation matrix for circadian gene co-expression.
@@ -91,10 +90,10 @@ checkVar = function(emat, groupVec) {
   
   varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
     
-    varMat = apply(emat[, groupVec == groupNow], MARGIN = 1, 
+    varVec = apply(emat[, groupVec == groupNow], MARGIN = 1, 
                    FUN = stats::var, na.rm = TRUE)
-    varDt = data.table::as.data.table(varMat, keep.rownames = 'gene')
-    data.table::setnames(varDt, 'varMat', 'variance')
+    varDt = data.table::as.data.table(varVec, keep.rownames = 'gene')
+    data.table::setnames(varDt, 'varVec', 'variance')
     varDt[, group := groupNow]
     
     zeroVar = varDt[variance == 0]}
@@ -109,7 +108,7 @@ checkGenes = function(emat, refCor) {
   geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
   if (length(geneNames) < nrow(refCor)) {
     missingGenes = setdiff(rownames(refCor), geneNames)
-    stop(paste0('The following gene(s) is/are not in the expression matrix: \n',
+    stop(paste0('The following gene(s) is/are not in the expression matrix:\n',
                 paste0(missingGenes, collapse = '\n')))} 
   
   return(geneNames)}
@@ -231,7 +230,7 @@ calcCCD = function(
 
 
 calcDeltaCCDSimple = function(ref, emat, idx, method = 'spearman', scale = FALSE) {
-  d0 = calcCCDSimple(ref, emat[, !idx], method = method, scale = scale)
+  d0 = calcCCDSimple(ref, emat[, -idx], method = method, scale = scale)
   d1 = calcCCDSimple(ref, emat[, idx], method = method, scale = scale)
   d = d1 - d0
   return(d)}
