@@ -1,18 +1,17 @@
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
   dt = data.table(t(ematNow), group = groupVec)
 
-  dt1 = dt[, data.table(stats::cor(.SD, method = method),
-                        gene1 = rownames(ematNow)),
-           by = group]
+  dt = dt[, data.table(stats::cor(.SD, method = method),
+                       gene1 = rownames(ematNow)),
+          by = group]
 
-  dt2 = data.table::melt(dt1, id.vars = c('group', 'gene1'),
-                         variable.name = 'gene2', value.name = 'rho')
-  dt2 = dt2[gene1 != gene2]
+  dt = data.table::melt(dt, id.vars = c('group', 'gene1'),
+                        variable.name = 'gene2', value.name = 'rho')
+  dt = dt[gene1 != gene2]
 
-  dt2[, gene1 := factor(gene1, rownames(ematNow))]
-  dt2[, gene2 := factor(gene2, rev(rownames(ematNow)))]
-  return(dt2)}
-
+  dt[, gene1 := factor(gene1, rownames(ematNow))]
+  dt[, gene2 := factor(gene2, rev(rownames(ematNow)))]
+  return(dt)}
 
 
 calcColorLimits = function(

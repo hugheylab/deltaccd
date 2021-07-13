@@ -78,10 +78,34 @@ test_that('makePerms', {
   expect_equal(ncol(perms), 10)
 })
 
-# test_that('calcCorr', {
-#   ematNow = rbind(c(1, -1, -1, 1), c(-1, 1, 1, -1))
-#   rownames(ematNow) = 1:2
-#   groupVec = c('a' ,'a', 'b', 'b')
-#   
-#   expect_
-# })
+test_that('calcCorr', {
+  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
+  rownames(ematNow) = 1:2
+  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
+  cors = calcCorr(ematNow, groupVec)
+  
+  expect_equal(cors[group == 'a']$rho, c(1, 1))
+  expect_equal(cors[group == 'b']$rho, c(-1, -1))
+})
+
+test_that('calcColorLimits', {
+  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
+  rownames(ematNow) = 1:2
+  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
+  cors = calcCorr(ematNow, groupVec)
+  cLims = calcColorLimits(cors$rho)
+
+  expect_equal(cLims, c('#E66101', '#5E3C99'))
+})
+
+test_that('plotHeatmapSimple', {
+  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
+  rownames(ematNow) = 1:2
+  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
+  cors = calcCorr(ematNow, groupVec)
+  cLims = calcColorLimits(cors$rho)
+
+  p = plotHeatmapSimple(
+    ggplot2::ggplot(cors) + ggplot2::facet_wrap(ggplot2::vars(group)), cLims)
+  vdiffr::expect_doppelganger('basic heatmap', p)
+})
