@@ -87,20 +87,21 @@ plotHeatmapSimple = function(ggObj, cLims) {
 plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   method = 'spearman'
 
-  ematNow = emat[geneNames, ]
-  if (nrow(ematNow) < 2) {
-    stop('Fewer than two genes in the supplied vector are in the expression matrix.')
-  } else if (nrow(ematNow) < length(geneNames)) {
-    warning(sprintf('%d gene(s) in the supplied vector is/are not in the expression matrix.',
-                    length(geneNames) - nrow(ematNow)))}
-
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
   } else if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
-
+  
+  sharedGenes = intersect(geneNames, rownames(emat))
+  if (length(sharedGenes) < 2) {
+    stop('Fewer than two genes in the supplied vector are in the expression matrix.')
+  } else if (length(sharedGenes) < length(geneNames)) {
+    warning(sprintf('%d gene(s) in the supplied vector is/are not in the expression matrix.',
+                    length(geneNames) - length(sharedGenes)))}
+  ematNow = emat[sharedGenes, ]
+  
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
   p = plotHeatmapSimple(

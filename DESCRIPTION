@@ -24,9 +24,10 @@ Imports:
   statmod (>= 1.4.30),
   data.table (>= 1.14.0)
 Suggests:
-    testthat (>= 3.0.0),
-    doParallel (>= 1.0.11),
-    knitr,
-    rmarkdown
+  doParallel (>= 1.0.11),
+  knitr,
+  rmarkdown,
+  testthat (>= 3.0.0),
+  vdiffr
 VignetteBuilder: knitr
 Config/testthat/edition: 3

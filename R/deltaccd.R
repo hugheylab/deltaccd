@@ -101,7 +101,9 @@ checkVar = function(emat, groupVec) {
   
   if (nrow(varCheck) > 0) {
     stop('Zero variance in the following gene-group pairs:\n', 
-         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}}
+         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
+  
+  invisible()}
 
 
 checkGenes = function(emat, refCor) {
