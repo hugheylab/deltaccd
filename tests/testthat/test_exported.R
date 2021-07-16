@@ -77,9 +77,9 @@ test_that('plotHeatmap', {
   expect_error(plotHeatmap(geneNames, ematNow, groupVec),
                'Fewer than two genes in the supplied vector are in the expression matrix.')
 
-  # geneNames = paste0('gene_', 1:3)
-  # expect_warning(plotHeatmap(geneNames, ematNow, groupVec),
-  #              '1 gene(s) in the supplied vector is/are not in the expression matrix.')
+  geneNames = paste0('gene_', 1:3)
+  expect_warning(plotHeatmap(geneNames, ematNow, groupVec),
+               '1 gene\\(s\\) in the supplied vector is/are not in the expression matrix.')
 })
 
 test_that('plotRefHeatmap', {
