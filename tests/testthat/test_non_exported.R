@@ -20,12 +20,12 @@ test_that('calcCCDSimple', {
   ccd = calcCCDSimple(diag(1, 2), diag(1, 2))
   expect_equal(ccd, 1)
   
-  ref = diag(1, 2)
+  ref = cbind(c(1, 1), c(1, 1))
   emat = rbind(c(1, 0, 1), c(0, 1, 0))
   ccd = calcCCDSimple(ref, emat)
-  expect_equal(ccd, 1)
+  expect_equal(ccd, 2)
   
-  ref = diag(1, 3)
+  ref = cbind(c(1, 0, -1), c(0, 1, -1), c(-1, -1, 1)) 
   emat = rbind(c(1, 0, 0), c(0, 1, -1), c(0, 1, 1))
   ccd = calcCCDSimple(ref, emat, scale = TRUE)
   expect_equal(ccd, 1/3)
@@ -80,8 +80,8 @@ test_that('checkRefCor', {
 })
 
 test_that('calcDeltaCCDSimple', {
-  ref = diag(1, 2)
-  emat = cbind(diag(1, 2), diag(1, 2))
+  ref = cbind(c(1, 1), c(1, 1)) 
+  emat = cbind(c(1, 1), c(1, 1))
   expect_equal(calcDeltaCCDSimple(ref, emat, 1:2), 0)
 })
 

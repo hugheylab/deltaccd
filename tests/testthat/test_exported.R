@@ -9,7 +9,7 @@ test_that('getRefCor', {
 })
 
 test_that('calcCCD', {
-  ref = diag(1, 2)
+  ref = cbind(c(1, 1), c(1, 1))
   rownames(ref) = paste0('gene_', 1:2)
   colnames(ref) = rownames(ref)
   
@@ -17,7 +17,7 @@ test_that('calcCCD', {
   rownames(emat) = paste0('gene_', 1:2)
   
   ccd = calcCCD(ref, emat)
-  expect_equal(ccd, data.table(group = 'all', CCD = 1, Pvalue = 0.5))
+  expect_equal(ccd, data.table(group = 'all', CCD = 2, Pvalue = 0.5))
   
   groupVec = c('a', 'b', 'c', 'd')
   expect_error(calcCCD(ref, emat, groupVec), 
@@ -93,14 +93,14 @@ test_that('plotHeatmap', {
 })
 
 test_that('plotRefHeatmap', {
-  ref = diag(1, 2)
-  rownames(ref) = paste0('gene_', 1:2)
+  ref = cbind(c(1, 0.5, -1), c(0.5, 1, -0.5), c(-1, -0.5, 1)) 
+  rownames(ref) = paste0('gene_', 1:3)
   colnames(ref) = rownames(ref)
   p = plotRefHeatmap(ref)
   vdiffr::expect_doppelganger('ref heatmap', p)
   
-  ref = cbind(ref, c(1, 1))
-  colnames(ref) = paste0('gene_', 1:3)
+  ref = cbind(ref, c(1, 1, 1))
+  colnames(ref) = paste0('gene_', 1:4)
   expect_error(suppressWarnings(plotRefHeatmap(ref)), 
                'refCor must be a correlation matrix, with identical rownames and colnames.',
                fixed = TRUE)
