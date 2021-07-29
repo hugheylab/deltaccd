@@ -1,6 +1,7 @@
 test_that('getRefCor', {
   expect_error(getRefCor(species = 'mouse', tissue = 'blood'),
-               'Blood reference is only available for species = \'human\'.')
+               'Blood reference is only available for species = \'human\'.',
+               fixed = TRUE)
   
   expect_equal(getRefCor(species = 'mouse', tissue = 'pan'), refCorMouseEntrez)
   
@@ -20,11 +21,13 @@ test_that('calcCCD', {
   
   groupVec = c('a', 'b', 'c', 'd')
   expect_error(calcCCD(ref, emat, groupVec), 
-               'Length of groupVec does not match the number of columns in emat.')
+               'Length of groupVec does not match the number of columns in emat.',
+               fixed = TRUE)
   
   groupVec = c('a', 'b', 'c')
   expect_error(calcCCD(ref, emat, groupVec), 
-               'Each unique group in groupVec must have at least three samples.')
+               'Each unique group in groupVec must have at least three samples.',
+               fixed = TRUE)
 })
 
 test_that('calcDeltaCCD', {
@@ -40,19 +43,22 @@ test_that('calcDeltaCCD', {
   expect_equal(dccd$DeltaCCD, 0)
   
   expect_error(calcDeltaCCD(refCor, emat, groupVec, groupNormal = 'j'),
-               'The supplied value for groupNormal is not present in groupVec.')
+               'The supplied value for groupNormal is not present in groupVec.',
+               fixed = TRUE)
   
   groupVec = rep('a', 6)
   expect_error(calcDeltaCCD(refCor, emat, groupVec, groupNormal = 'a'),
-               'groupVec contains only one unique group.')
+               'groupVec contains only one unique group.', fixed = TRUE)
   
   groupVec = c(rep('a', 4), 'b', 'b')
   expect_error(calcDeltaCCD(refCor, emat, groupVec, groupNormal = 'a'),
-               'Each unique group in groupVec must have at least three samples.')
+               'Each unique group in groupVec must have at least three samples.',
+               fixed = TRUE)
   
   groupVec = c(groupVec, 'b')
   expect_error(calcDeltaCCD(refCor, emat, groupVec, groupNormal = 'a'),
-               'Length of groupVec does not match the number of columns in emat.')
+               'Length of groupVec does not match the number of columns in emat.',
+               fixed = TRUE)
 })
 
 test_that('plotHeatmap', {
@@ -66,20 +72,24 @@ test_that('plotHeatmap', {
   
   groupVec = c(rep('a', 3), rep('b', 4))
   expect_error(plotHeatmap(geneNames, ematNow, groupVec),
-               'Length of groupVec does not match the number of columns in emat.')  
+               'Length of groupVec does not match the number of columns in emat.',
+               fixed = TRUE)  
   
   groupVec = c('a', 'a', 'b', 'b', 'c', 'c')
   expect_error(plotHeatmap(geneNames, ematNow, groupVec),
-               'Each unique group in groupVec must have at least three samples.')
+               'Each unique group in groupVec must have at least three samples.',
+               fixed = TRUE)
 
   groupVec = c(rep('a', 3), rep('b', 3))
   geneNames = paste0('gene_', c(1, 3))
   expect_error(plotHeatmap(geneNames, ematNow, groupVec),
-               'Fewer than two genes in the supplied vector are in the expression matrix.')
+               'Fewer than two genes in the supplied vector are in the expression matrix.',
+               fixed = TRUE)
 
   geneNames = paste0('gene_', 1:3)
   expect_warning(plotHeatmap(geneNames, ematNow, groupVec),
-               '1 gene\\(s\\) in the supplied vector is/are not in the expression matrix.')
+               '1 gene(s) in the supplied vector is/are not in the expression matrix.',
+               fixed = TRUE)
 })
 
 test_that('plotRefHeatmap', {
@@ -91,6 +101,7 @@ test_that('plotRefHeatmap', {
   
   ref = cbind(ref, c(1, 1))
   colnames(ref) = paste0('gene_', 1:3)
-  expect_error(plotRefHeatmap(ref), 
-               'refCor must be a correlation matrix, with identical rownames and colnames.')
+  expect_error(suppressWarnings(plotRefHeatmap(ref)), 
+               'refCor must be a correlation matrix, with identical rownames and colnames.',
+               fixed = TRUE)
 })

@@ -1,3 +1,13 @@
+geneNames = paste0('gene_', 1:2)
+
+genCors = function() {
+  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
+  rownames(ematNow) = geneNames
+  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
+  cors = calcCorr(ematNow, groupVec)
+  return(cors)}
+
+
 test_that('calcDist', {
   d = calcDist(c(1, 0), c(1, 0))
   expect_equal(d, 0)
@@ -38,10 +48,10 @@ test_that('checkVar', {
 
 test_that('checkGenes', {
   emat = diag(1, 2)
-  rownames(emat) = paste0('gene_', 1:2)
-  refCor = diag(1, 2)
-  rownames(refCor) = paste0('gene_', 1:2)
-  expect_visible(checkGenes(emat, refCor))
+  rownames(emat) = geneNames 
+  refCor = emat 
+  rownames(refCor) = geneNames
+  expect_equal(checkGenes(emat, refCor), geneNames) 
   
   refCor = diag(1, 4)
   rownames(refCor) = paste0('gene_', 1:4)
@@ -52,19 +62,21 @@ test_that('checkGenes', {
 
 test_that('checkRefCor', {
   refCor = diag(1, 2)
-  rownames(refCor) = paste0('gene_', 1:2)
+  rownames(refCor) = geneNames
   colnames(refCor) = rownames(refCor)
-  expect_visible(checkRefCor(refCor))
+  expect_equal(checkRefCor(refCor), refCor)
   
-  expect_error(checkRefCor(), 'Either refCor or refEmat must be supplied.')
+  expect_error(checkRefCor(), 'Either refCor or refEmat must be supplied.',fixed = TRUE)
   
   rownames(refCor) = paste0('gene_', 3:4)
   expect_error(checkRefCor(refCor),
-               'refCor must be a correlation matrix, with identical rownames and colnames.')
+               'refCor must be a correlation matrix, with identical rownames and colnames.',
+               fixed = TRUE)
   
   refCor = rbind(c(1, 0, 0), c(1, 0, 0))
   expect_error(checkRefCor(refCor),
-               'refCor must be a correlation matrix, with identical rownames and colnames.')
+               'refCor must be a correlation matrix, with identical rownames and colnames.',
+               fixed = TRUE)
 })
 
 test_that('calcDeltaCCDSimple', {
@@ -79,10 +91,7 @@ test_that('makePerms', {
 })
 
 test_that('calcCorr', {
-  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
-  rownames(ematNow) = paste0('gene_', 1:2)
-  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
-  cors = calcCorr(ematNow, groupVec)
+  cors = genCors()
   
   expect_equal(cors, data.table(group = c('a', 'b', 'a', 'b'), 
                                 gene1 = factor(paste0('gene_', c(2, 2, 1, 1))), 
@@ -92,20 +101,14 @@ test_that('calcCorr', {
 })
 
 test_that('calcColorLimits', {
-  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
-  rownames(ematNow) = paste0('gene_', 1:2)
-  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
-  cors = calcCorr(ematNow, groupVec)
+  cors = genCors()
   cLims = calcColorLimits(cors$rho)
 
   expect_equal(cLims, c('#E66101', '#5E3C99'))
 })
 
 test_that('plotHeatmapSimple', {
-  ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
-  rownames(ematNow) = paste0('gene_', 1:2)
-  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
-  cors = calcCorr(ematNow, groupVec)
+  cors = genCors()
   cLims = calcColorLimits(cors$rho)
 
   p = plotHeatmapSimple(
