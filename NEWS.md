@@ -1,3 +1,6 @@
+# deltaccd 0.2.4
+* Added tests for all functions.
+
 # deltaccd 0.2.3
 * Modified `calcCCD` and `calcDeltaCCD` to throw errors for genes with zero group-wise variance.
 * `calcCCD` and `calcDeltaCCD` now require all genes from the reference to be present in the expression matrix passed to `emat`.
