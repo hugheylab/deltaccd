@@ -1,17 +1,17 @@
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
   dt = data.table(t(ematNow), group = groupVec)
 
-  dt1 = dt[, data.table(stats::cor(.SD, method = method),
-                        gene1 = rownames(ematNow)),
-           by = group]
+  dt = dt[, data.table(stats::cor(.SD, method = method),
+                       gene1 = rownames(ematNow)),
+          by = group]
 
-  dt2 = data.table::melt(dt1, id.vars = c('group', 'gene1'),
-                         variable.name = 'gene2', value.name = 'rho')
-  dt2 = dt2[gene1 != gene2]
+  dt = data.table::melt(dt, id.vars = c('group', 'gene1'),
+                        variable.name = 'gene2', value.name = 'rho')
+  dt = dt[gene1 != gene2]
 
-  dt2[, gene1 := factor(gene1, rownames(ematNow))]
-  dt2[, gene2 := factor(gene2, rev(rownames(ematNow)))]
-  return(dt2)}
+  dt[, gene1 := factor(gene1, rownames(ematNow))]
+  dt[, gene2 := factor(gene2, rev(rownames(ematNow)))]
+  return(dt)}
 
 
 calcColorLimits = function(
@@ -87,20 +87,21 @@ plotHeatmapSimple = function(ggObj, cLims) {
 plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   method = 'spearman'
 
-  ematNow = emat[geneNames, ]
-  if (nrow(ematNow) < 2) {
-    stop('Fewer than two genes in the supplied vector are in the expression matrix.')
-  } else if (nrow(ematNow) < length(geneNames)) {
-    warning(sprintf('%d gene(s) in the supplied vector is/are not in the expression matrix.',
-                    length(geneNames) - nrow(ematNow)))}
-
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
   } else if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
-
+  
+  sharedGenes = intersect(geneNames, rownames(emat))
+  if (length(sharedGenes) < 2) {
+    stop('Fewer than two genes in the supplied vector are in the expression matrix.')
+  } else if (length(sharedGenes) < length(geneNames)) {
+    warning(sprintf('%d gene(s) in the supplied vector is/are not in the expression matrix.',
+                    length(geneNames) - length(sharedGenes)))}
+  ematNow = emat[sharedGenes, ]
+  
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
   p = plotHeatmapSimple(
