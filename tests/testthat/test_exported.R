@@ -1,3 +1,6 @@
+library('ggplot2')
+library('vdiffr')
+
 test_that('getRefCor', {
   expect_error(getRefCor(species = 'mouse', tissue = 'blood'),
                'Blood reference is only available for species = \'human\'.',
@@ -68,7 +71,7 @@ test_that('plotHeatmap', {
   geneNames = paste0('gene_', 1:2)
   p = plotHeatmap(geneNames, ematNow, groupVec)
   
-  vdiffr::expect_doppelganger('basic heatmap', p)
+  expect_doppelganger('basic heatmap', p)
   
   groupVec = c(rep('a', 3), rep('b', 4))
   expect_error(plotHeatmap(geneNames, ematNow, groupVec),
@@ -97,7 +100,7 @@ test_that('plotRefHeatmap', {
   rownames(ref) = paste0('gene_', 1:3)
   colnames(ref) = rownames(ref)
   p = plotRefHeatmap(ref)
-  vdiffr::expect_doppelganger('ref heatmap', p)
+  expect_doppelganger('ref heatmap', p)
   
   ref = cbind(ref, c(1, 1, 1))
   colnames(ref) = paste0('gene_', 1:4)

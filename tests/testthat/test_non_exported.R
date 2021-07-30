@@ -1,3 +1,6 @@
+library('ggplot2')
+library('vdiffr')
+
 geneNames = paste0('gene_', 1:2)
 
 genCors = function() {
@@ -80,8 +83,8 @@ test_that('checkRefCor', {
 })
 
 test_that('calcDeltaCCDSimple', {
-  ref = cbind(c(1, 1), c(1, 1)) 
-  emat = cbind(c(1, 1), c(1, 1))
+  ref = cbind(c(1, -1), c(-1, 1)) 
+  emat = ref
   expect_equal(calcDeltaCCDSimple(ref, emat, 1:2), 0)
 })
 
@@ -112,6 +115,6 @@ test_that('plotHeatmapSimple', {
   cLims = calcColorLimits(cors$rho)
 
   p = plotHeatmapSimple(
-    ggplot2::ggplot(cors) + ggplot2::facet_wrap(ggplot2::vars(group)), cLims)
-  vdiffr::expect_doppelganger('basic heatmap', p)
+    ggplot(cors) + ggplot2::facet_wrap(vars(group)), cLims)
+  expect_doppelganger('basic heatmap', p)
 })
