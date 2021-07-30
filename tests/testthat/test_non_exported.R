@@ -115,6 +115,6 @@ test_that('plotHeatmapSimple', {
   cLims = calcColorLimits(cors$rho)
 
   p = plotHeatmapSimple(
-    ggplot(cors) + ggplot2::facet_wrap(vars(group)), cLims)
+    ggplot(cors) + facet_wrap(vars(group)), cLims)
   expect_doppelganger('basic heatmap', p)
 })
