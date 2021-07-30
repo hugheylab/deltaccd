@@ -11,7 +11,6 @@
 # deltaccd 0.2.1
 * Fixed bugs in `plotRefHeatmap()`.
 * Ordered genes in human blood reference to make heatmap more interpretable.
->>>>>>> origin/master
 
 # deltaccd 0.2.0
 * Modified `calcCorr()`, `calcCCD()`, `calcDeltaCCD()` to use data.table.
