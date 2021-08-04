@@ -4,9 +4,6 @@
 NULL
 
 
-globalVariables(c(
-  'i', 'groupNow', 'group', '.', 'gene1', 'gene2', 'rho', 'group2Now',
-  '.SD', 'variance'))
 
 
 #' Retrieve the reference correlation matrix for circadian gene co-expression.
@@ -124,6 +121,7 @@ getRefCor = function(
 calcCCD = function(
   refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000, geneNames = NULL,
   dopar = FALSE, scale = FALSE) {
+  groupNow = NULL
 
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
@@ -232,7 +230,9 @@ calcCCD = function(
 calcDeltaCCD = function(
   refCor, emat, groupVec, groupNormal, refEmat = NULL, nPerm = 1000,
   geneNames = NULL, dopar = FALSE, scale = FALSE) {
-
+  group2Now = NULL
+  i = NULL
+  
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
