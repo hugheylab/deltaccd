@@ -33,7 +33,6 @@ calcColorLimits = function(
 
 
 plotHeatmapSimple = function(ggObj, cLims) {
-  gene1 = gene2 = rho = NULL
   p = ggObj +
     ggplot2::geom_tile(ggplot2::aes(x = .data$gene1, y = .data$gene2, fill = .data$rho)) +
     ggplot2::labs(x = 'Gene', y = 'Gene') +
