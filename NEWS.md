@@ -1,3 +1,6 @@
+# deltaccd 0.2.6
+* Fixed bug in calcCCD.
+
 # deltaccd 0.2.5
 * Replaced `globalVariables` call to get around `R CMD check` warning with null variable assignment and using the rlang .data variable for ggplot2.
 
