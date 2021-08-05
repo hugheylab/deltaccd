@@ -15,6 +15,7 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
 
 
 checkVar = function(emat, groupVec) {
+  groupNow = group = variance = NULL
   
   varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
     

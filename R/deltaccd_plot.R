@@ -1,4 +1,6 @@
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
+  .SD = group = gene1 = gene2 = NULL
+  
   dt = data.table(t(ematNow), group = groupVec)
 
   dt = dt[, data.table(stats::cor(.SD, method = method),
@@ -32,7 +34,7 @@ calcColorLimits = function(
 
 plotHeatmapSimple = function(ggObj, cLims) {
   p = ggObj +
-    ggplot2::geom_tile(ggplot2::aes(x = gene1, y = gene2, fill = rho)) +
+    ggplot2::geom_tile(ggplot2::aes(x = .data$gene1, y = .data$gene2, fill = .data$rho)) +
     ggplot2::labs(x = 'Gene', y = 'Gene') +
     ggplot2::scale_fill_gradient2(
       low = cLims[1], mid = '#f7f7f7', high = cLims[2], na.value = 'grey80') +
@@ -105,7 +107,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
   p = plotHeatmapSimple(
-    ggplot2::ggplot(dt) + ggplot2::facet_wrap(ggplot2::vars(group)), cLims)
+    ggplot2::ggplot(dt) + ggplot2::facet_wrap(ggplot2::vars(.data$group)), cLims)
   return(p)}
 
 
@@ -141,6 +143,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 #'
 #' @export
 plotRefHeatmap = function(refCor) {
+  gene1 = gene2 = NULL
   if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
   
