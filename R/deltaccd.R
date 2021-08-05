@@ -1,6 +1,7 @@
 #' @importFrom foreach foreach %do% %dopar%
 #' @importFrom doRNG %dorng%
 #' @importFrom data.table data.table :=
+#' @importFrom rlang .data
 NULL
 
 

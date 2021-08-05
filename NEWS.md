@@ -1,4 +1,7 @@
 # deltaccd 0.2.4
+* Replaced `globalVariable` call to get around `devtools::check` warning with null variable assignment and using the rlang .data variable for ggplot2.
+
+# deltaccd 0.2.4
 * Added tests for all functions.
 
 # deltaccd 0.2.3

@@ -35,7 +35,7 @@ calcColorLimits = function(
 plotHeatmapSimple = function(ggObj, cLims) {
   gene1 = gene2 = rho = NULL
   p = ggObj +
-    ggplot2::geom_tile(ggplot2::aes(x = gene1, y = gene2, fill = rho)) +
+    ggplot2::geom_tile(ggplot2::aes(x = .data$gene1, y = .data$gene2, fill = .data$rho)) +
     ggplot2::labs(x = 'Gene', y = 'Gene') +
     ggplot2::scale_fill_gradient2(
       low = cLims[1], mid = '#f7f7f7', high = cLims[2], na.value = 'grey80') +
@@ -88,7 +88,6 @@ plotHeatmapSimple = function(ggObj, cLims) {
 #'
 #' @export
 plotHeatmap = function(geneNames, emat, groupVec = NULL) {
-  group = NULL
   method = 'spearman'
 
   if (is.null(groupVec)) {
@@ -109,7 +108,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
   p = plotHeatmapSimple(
-    ggplot2::ggplot(dt) + ggplot2::facet_wrap(ggplot2::vars(group)), cLims)
+    ggplot2::ggplot(dt) + ggplot2::facet_wrap(ggplot2::vars(.data$group)), cLims)
   return(p)}
 
 
