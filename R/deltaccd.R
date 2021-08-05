@@ -141,7 +141,8 @@ calcCCD = function(
   
   if (nPerm > 1) {
     checkVar(emat, groupVec)
-  } else { checkVar(emat[geneNames, ], groupVec) }
+  } else { 
+    checkVar(emat[geneNames, ], groupVec)}
 
   nComb = choose(nrow(emat), length(geneNames))
 

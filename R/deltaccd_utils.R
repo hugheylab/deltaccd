@@ -38,7 +38,8 @@ checkVar = function(emat, groupVec) {
 checkGenes = function(emat, refCor, geneNames = NULL) {
   if (is.null(geneNames)) {
     geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
-  } else { geneNames = rownames(refCor)[rownames(refCor) %in% geneNames] }
+  } else { 
+    geneNames = rownames(refCor)[rownames(refCor) %in% geneNames]}
   
   if (length(geneNames) < nrow(refCor)) {
     missingGenes = setdiff(rownames(refCor), geneNames)
