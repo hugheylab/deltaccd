@@ -1,8 +1,5 @@
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
-  .SD = NULL
-  group = NULL
-  gene1 = NULL
-  gene2 = NULL
+  .SD = group = gene1 = gene2 = NULL
   
   dt = data.table(t(ematNow), group = groupVec)
 
@@ -36,9 +33,7 @@ calcColorLimits = function(
 
 
 plotHeatmapSimple = function(ggObj, cLims) {
-  gene1 = NULL
-  gene2 = NULL
-  rho = NULL
+  gene1 = gene2 = rho = NULL
   p = ggObj +
     ggplot2::geom_tile(ggplot2::aes(x = gene1, y = gene2, fill = rho)) +
     ggplot2::labs(x = 'Gene', y = 'Gene') +
@@ -150,8 +145,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 #'
 #' @export
 plotRefHeatmap = function(refCor) {
-  gene1 = NULL
-  gene2 = NULL
+  gene1 = gene2 = NULL
   if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
   

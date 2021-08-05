@@ -230,8 +230,7 @@ calcCCD = function(
 calcDeltaCCD = function(
   refCor, emat, groupVec, groupNormal, refEmat = NULL, nPerm = 1000,
   geneNames = NULL, dopar = FALSE, scale = FALSE) {
-  group2Now = NULL
-  i = NULL
+  group2Now = i = NULL
   
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
