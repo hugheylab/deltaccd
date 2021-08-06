@@ -22,6 +22,9 @@ test_that('calcCCD', {
   ccd = calcCCD(ref, emat)
   expect_equal(ccd, data.table(group = 'all', CCD = 2, Pvalue = 0.5))
   
+  ccd = calcCCD(ref, emat, nPerm = 0)
+  expect_equal(ccd, data.table(group = 'all', CCD = 2, Pvalue = NA))
+  
   groupVec = c('a', 'b', 'c', 'd')
   expect_error(calcCCD(ref, emat, groupVec), 
                'Length of groupVec does not match the number of columns in emat.',

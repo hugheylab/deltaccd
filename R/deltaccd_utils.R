@@ -35,8 +35,12 @@ checkVar = function(emat, groupVec) {
   invisible()}
 
 
-checkGenes = function(emat, refCor) {
-  geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
+checkGenes = function(emat, refCor, geneNames = NULL) {
+  if (is.null(geneNames)) {
+    geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
+  } else { 
+    geneNames = rownames(refCor)[rownames(refCor) %in% geneNames]}
+  
   if (length(geneNames) < nrow(refCor)) {
     missingGenes = setdiff(rownames(refCor), geneNames)
     stop(paste0('The following gene(s) is/are not in the expression matrix:\n',

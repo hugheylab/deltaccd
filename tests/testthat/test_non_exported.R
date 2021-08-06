@@ -61,6 +61,13 @@ test_that('checkGenes', {
   expect_error(checkGenes(emat, refCor), 
                paste0('The following gene(s) is/are not in the expression matrix:\n', 
                       paste0(paste0('gene_', 3:4), collapse = '\n')), fixed = TRUE)
+  
+  emat = diag(1, 6)
+  refCor = diag(1, 4)
+  geneNames2 = paste0('gene_', 1:6)
+  rownames(emat) = geneNames2
+  rownames(refCor) = geneNames2[1:4]
+  expect_equal(checkGenes(emat, refCor, geneNames2[1:5]), geneNames2[1:4])
 })
 
 test_that('checkRefCor', {

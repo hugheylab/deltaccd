@@ -129,7 +129,7 @@ calcCCD = function(
 
 
   refCor = checkRefCor(refCor, refEmat, geneNames, method)
-  geneNames = checkGenes(emat, refCor)
+  geneNames = checkGenes(emat, refCor, geneNames)
   
 
   if (is.null(groupVec)) {
@@ -141,7 +141,8 @@ calcCCD = function(
   
   if (nPerm > 1) {
     checkVar(emat, groupVec)
-  } else { checkVar(emat[geneNames, ]) }
+  } else { 
+    checkVar(emat[geneNames, ], groupVec)}
 
   nComb = choose(nrow(emat), length(geneNames))
 
