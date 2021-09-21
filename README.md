@@ -32,12 +32,6 @@ if (!requireNamespace('BiocManager', quietly = TRUE))
 BiocManager::install('deltaccd', site_repository = 'https://hugheylab.github.io/drat/')
 ```
 
-There's also a [docker image](https://hub.docker.com/r/hugheylab/hugheyverse), which has all dependencies installed.
-
-```bash
-docker pull hugheylab/hugheyverse
-```
-
 ## Usage
 
 See the example in the documentation for `calcDeltaCCD()`, as well as the full [reference documentation](https://deltaccd.hugheylab.org/reference/index.html).
