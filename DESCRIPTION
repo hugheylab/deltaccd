@@ -11,7 +11,8 @@ Description: deltaccd can infer progression of circadian rhythms in
 URL: https://github.com/hugheylab/deltaccd
 License: GPL-2
 Encoding: UTF-8
-LazyData: false
+LazyData: true
+LazyDataCompression: gzip
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Depends:
