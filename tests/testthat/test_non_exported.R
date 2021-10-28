@@ -44,7 +44,7 @@ test_that('checkVar', {
   expect_error(
     checkVar(emat, c('a', 'a', 'b', 'b')), 
     paste0('Zero variance in 2 gene-group pairs. ',
-           'See ./zero_var_genes.csv for full list.'), fixed = TRUE)
+           'See _deltaccd_zero_var_genes.csv for full list.'), fixed = TRUE)
 })
 
 test_that('checkGenes', {
@@ -59,7 +59,7 @@ test_that('checkGenes', {
   expect_error(
     checkGenes(emat, refCor), 
     paste0('2 gene(s) is/are not in the expression matrix. ', 
-           'See ./missing_genes.csv for full list.'), fixed = TRUE)
+           'See _deltaccd_missing_genes.csv for full list.'), fixed = TRUE)
   
   emat = diag(1, 6)
   refCor = diag(1, 4)

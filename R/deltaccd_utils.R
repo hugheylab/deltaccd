@@ -16,7 +16,7 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
 
 checkVar = function(
   emat, groupVec, 
-  checkFile = file.path('.', 'zero_var_genes.csv')) {
+  checkFile = file.path('_deltaccd_zero_var_genes.csv')) {
   
   groupNow = group = variance = NULL
   
@@ -41,7 +41,7 @@ checkVar = function(
 
 checkGenes = function(
   emat, refCor, geneNames = NULL,
-  checkFile = file.path('.', 'missing_genes.csv')) {
+  checkFile = file.path('_deltaccd_missing_genes.csv')) {
   if (is.null(geneNames)) {
     geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
   } else { 
