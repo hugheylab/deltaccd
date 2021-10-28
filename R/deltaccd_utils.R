@@ -14,7 +14,10 @@ calcCCDSimple = function(ref, emat, method = 'spearman', scale = FALSE) {
   return(ccd)}
 
 
-checkVar = function(emat, groupVec) {
+checkVar = function(
+  emat, groupVec, 
+  checkFile = file.path('.', 'zero_var_genes.csv')) {
+  
   groupNow = group = variance = NULL
   
   varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
@@ -29,22 +32,26 @@ checkVar = function(emat, groupVec) {
   varCheck[, variance := NULL]  
   
   if (nrow(varCheck) > 0) {
-    stop('Zero variance in the following gene-group pairs:\n', 
-         paste(utils::capture.output(print(varCheck)), collapse = '\n'))}
+    data.table::fwrite(varCheck, checkFile)
+    stop('Zero variance in ', nrow(varCheck), ' gene-group pairs. ',
+         'See ', checkFile, ' for full list.')}
   
   invisible()}
 
 
-checkGenes = function(emat, refCor, geneNames = NULL) {
+checkGenes = function(
+  emat, refCor, geneNames = NULL,
+  checkFile = file.path('.', 'missing_genes.csv')) {
   if (is.null(geneNames)) {
     geneNames = rownames(refCor)[rownames(refCor) %in% rownames(emat)]
   } else { 
     geneNames = rownames(refCor)[rownames(refCor) %in% geneNames]}
   
   if (length(geneNames) < nrow(refCor)) {
-    missingGenes = setdiff(rownames(refCor), geneNames)
-    stop(paste0('The following gene(s) is/are not in the expression matrix:\n',
-                paste0(missingGenes, collapse = '\n')))} 
+    missingGenes = data.table(gene = setdiff(rownames(refCor), geneNames))
+    data.table::fwrite(missingGenes, checkFile)
+    stop(nrow(missingGenes), ' gene(s) is/are not in the expression matrix. ',
+         'See ', checkFile, ' for full list.')} 
   
   return(geneNames)}
 

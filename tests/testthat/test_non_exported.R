@@ -41,12 +41,10 @@ test_that('checkVar', {
   
   emat = cbind(diag(1, 2), matrix(1, 2, 2))
   rownames(emat) = paste0('gene_', 1:2)
-  expect_error(checkVar(emat, c('a', 'a', 'b', 'b')), 
-               paste0('Zero variance in the following gene-group pairs:\n', 
-                     paste(utils::capture.output(
-                       data.table(gene = paste0('gene_', 1:2), 
-                                  group = c('b', 'b'))), 
-                       collapse = '\n')), fixed = TRUE)
+  expect_error(
+    checkVar(emat, c('a', 'a', 'b', 'b')), 
+    paste0('Zero variance in 2 gene-group pairs. ',
+           'See ./zero_var_genes.csv for full list.'), fixed = TRUE)
 })
 
 test_that('checkGenes', {
@@ -58,9 +56,10 @@ test_that('checkGenes', {
   
   refCor = diag(1, 4)
   rownames(refCor) = paste0('gene_', 1:4)
-  expect_error(checkGenes(emat, refCor), 
-               paste0('The following gene(s) is/are not in the expression matrix:\n', 
-                      paste0(paste0('gene_', 3:4), collapse = '\n')), fixed = TRUE)
+  expect_error(
+    checkGenes(emat, refCor), 
+    paste0('2 gene(s) is/are not in the expression matrix. ', 
+           'See ./missing_genes.csv for full list.'), fixed = TRUE)
   
   emat = diag(1, 6)
   refCor = diag(1, 4)
