@@ -1,3 +1,6 @@
+# deltaccd 0.2.7
+* `calcCCD` and `calcDeltaCCD` now produce .csv lists of genes with zero group-wise variance or which are missing from the reference.
+
 # deltaccd 0.2.6
 * Fixed bug in calcCCD.
 
