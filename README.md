@@ -1,6 +1,6 @@
 # deltaccd
 
-[![check-coverage-deploy](https://github.com/hugheylab/deltaccd/workflows/check-coverage-deploy/badge.svg)](https://github.com/hugheylab/deltaccd/actions)
+[![check-deploy](https://github.com/hugheylab/deltaccd/workflows/check-deploy/badge.svg)](https://github.com/hugheylab/deltaccd/actions)
 [![codecov](https://codecov.io/gh/hugheylab/deltaccd/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/deltaccd)
 
 `deltaccd` infers the progression of circadian rhythms using gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
