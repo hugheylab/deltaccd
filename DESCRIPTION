@@ -8,7 +8,7 @@ Authors@R: as.person(c(
 Description: deltaccd can infer progression of circadian rhythms in
   transcriptome data in which samples are not labeled with time of day and
   coverage of the circadian cycle may be incomplete.
-URL: https://github.com/hugheylab/deltaccd
+URL: https://deltaccd.hugheylab.org, https://github.com/hugheylab/deltaccd
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

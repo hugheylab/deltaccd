@@ -2,6 +2,7 @@
 
 [![check-deploy](https://github.com/hugheylab/deltaccd/workflows/check-deploy/badge.svg)](https://github.com/hugheylab/deltaccd/actions)
 [![codecov](https://codecov.io/gh/hugheylab/deltaccd/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/deltaccd)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ddd35b6b-7210-442f-83e7-7115b23d9585/deploy-status)](https://app.netlify.com/sites/jovial-lovelace-7e335a/deploys)
 
 `deltaccd` infers the progression of circadian rhythms using gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
@@ -9,28 +10,29 @@ For details about the method and to see how we used it to analyze circadian gene
 
 ## Installation
 
-If you use RStudio, go to Tools -> Global Options... -> Packages -> Add... (under Secondary repositories), then enter:
+1. Install [`BiocManager`](https://cran.r-project.org/package=BiocManager).
 
-- Name: hugheylab
-- Url: https://hugheylab.github.io/drat/
+    ```r
+    if (!requireNamespace('BiocManager', quietly = TRUE))
+      install.packages('BiocManager')
+    ```
 
-You only have to do this once. Then you can install or update the package by entering:
+1. If you use RStudio, go to Tools → Global Options... → Packages → Add... (under Secondary repositories), then enter:
 
-```R
-if (!requireNamespace('BiocManager', quietly = TRUE))
-  install.packages('BiocManager')
+    - Name: hugheylab
+    - Url: https://hugheylab.github.io/drat/
 
-BiocManager::install('deltaccd')
-```
+    You only have to do this once. Then you can install or update the package by entering:
 
-Alternatively, you can install or update the package by entering:
+    ```r
+    BiocManager::install('deltaccd')
+    ```
 
-```R
-if (!requireNamespace('BiocManager', quietly = TRUE))
-  install.packages('BiocManager')
+    Alternatively, you can install or update the package by entering:
 
-BiocManager::install('deltaccd', site_repository = 'https://hugheylab.github.io/drat/')
-```
+    ```r
+    BiocManager::install('deltaccd', site_repository = 'https://hugheylab.github.io/drat/')
+    ```
 
 ## Usage
 
