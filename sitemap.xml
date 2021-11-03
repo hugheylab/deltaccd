@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://deltaccd.hugheylab.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://deltaccd.hugheylab.org/reference/GSE19188.html</loc>
+  </url>
+  <url>
+    <loc>https://deltaccd.hugheylab.org/reference/calcCCD.html</loc>
+  </url>
+  <url>
+    <loc>https://deltaccd.hugheylab.org/reference/calcDeltaCCD.html</loc>
+  </url>
+  <url>
+    <loc>https://deltaccd.hugheylab.org/reference/getRefCor.html</loc>
+  </url>
+  <url>
+    <loc>https://deltaccd.hugheylab.org/reference/plotHeatmap.html</loc>
+  </url>
+  <url>
+    <loc>https://deltaccd.hugheylab.org/reference/plotRefHeatmap.html</loc>
+  </url>
+</urlset>
