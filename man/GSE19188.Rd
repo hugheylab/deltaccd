@@ -7,10 +7,10 @@
 \format{
 A list with two objects:
 \describe{
-\item{emat}{matrix of normalized expression values, where each row
-corresponds to a gene (rownames correspond to Entrez gene IDs) and each
-column corresponds to a sample}
-\item{groupVec}{vector of condition (tumor or non-tumor) for each sample}
+\item{emat}{Matrix of normalized expression values, where each row
+corresponds to a gene (rownames are Entrez Gene IDs) and each column
+corresponds to a sample. To save space, genes have been downsampled.}
+\item{groupVec}{Vector of condition (tumor or healthy) for each sample.}
 }
 }
 \source{
@@ -20,8 +20,8 @@ column corresponds to a sample}
 GSE19188
 }
 \description{
-Data of gene expression measured by microarray for tumor and non-tumor
-samples from human non-small cell lung cancer.
+Data of gene expression measured by microarray for samples from human
+non-small cell lung cancer.
 }
 \seealso{
 \code{\link[=getRefCor]{getRefCor()}}, \code{\link[=calcCCD]{calcCCD()}}, \code{\link[=calcDeltaCCD]{calcDeltaCCD()}}

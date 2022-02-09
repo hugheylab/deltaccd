@@ -1,37 +1,41 @@
-library('annotate')
 library('data.table')
-library('metapredict')
+
+parentDir = 'data-raw'
 
 ####################
 
-cg = fread(file.path('data-raw', 'genes_clock.csv'))
+cg = fread(file.path(parentDir, 'genes_clock.csv'))
 cg[, entrez_mm := as.character(entrez_mm)]
 cg[, entrez_hs := as.character(entrez_hs)]
 clockGenes = cg
 
-bg = fread(file.path('data-raw', 'genes_blood.csv'))
+bg = fread(file.path(parentDir, 'genes_blood.csv'))
 bg[, entrez_hs := as.character(entrez_hs)]
 bloodGenes = bg
 
-refCorMouseEntrez = readRDS(file.path('data-raw', 'result_mouse_ref.rds'))
+refCorMouseEntrez = readRDS(file.path(parentDir, 'result_mouse_ref.rds'))
 refCorMouseEntrez = refCorMouseEntrez[cg$entrez_mm, cg$entrez_mm]
 
-refCorHumanBlood = readRDS(file.path('data-raw', 'result_blood_ref.rds'))
+refCorHumanBlood = readRDS(file.path(parentDir, 'result_blood_ref.rds'))
 
 usethis::use_data(clockGenes, bloodGenes, refCorMouseEntrez, refCorHumanBlood,
                   internal = TRUE, overwrite = TRUE)
 
 ####################
 
-sampleMetadataGeo = fread(file.path('data-raw', 'sample_metadata_cancer.csv'))
-sampleMetadataGeo = sampleMetadataGeo[condition %in% c('tumor', 'nontumor')]
-sampleMetadataGeo[condition == 'nontumor', condition := 'non-tumor']
-ematListGeo = extractExpressionData(
-  readRDS(file.path('data-raw', 'proc_cancer.rds')), sampleMetadataGeo)
+study = 'GSE19188'
+seeker::seekerArray(list(study = study, geneIdType = 'entrez'), parentDir)
 
-studyNow = 'GSE19188'
-groupVec = sampleMetadataGeo$condition[sampleMetadataGeo$study == studyNow]
-emat = ematListGeo[[studyNow]][, sampleMetadataGeo$sample[sampleMetadataGeo$study == studyNow]]
+metadata = fread(file.path(parentDir, study, 'sample_metadata.csv'))
+groupVec = metadata[['tissue type:ch1']]
+
+emat = qs::qread(file.path(parentDir, study, 'gene_expression_matrix.qs'))
+idx = c(which(rownames(emat) %in% clockGenes$entrez_hs),
+        seq(1, nrow(emat), 30))
+emat = emat[unique(idx), ]
+
 GSE19188 = list(emat = emat, groupVec = groupVec)
 
 usethis::use_data(GSE19188, overwrite = TRUE)
+
+unlink(file.path(parentDir, study), recursive = TRUE)

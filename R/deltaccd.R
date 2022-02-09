@@ -5,8 +5,6 @@
 NULL
 
 
-
-
 #' Retrieve the reference correlation matrix for circadian gene co-expression.
 #'
 #' The pan-tissue reference matrix is based on a fixed-effects meta-analysis of
@@ -130,7 +128,7 @@ calcCCD = function(
 
   refCor = checkRefCor(refCor, refEmat, geneNames, method)
   geneNames = checkGenes(emat, refCor, geneNames)
-  
+
 
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
@@ -138,10 +136,10 @@ calcCCD = function(
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
-  
+
   if (nPerm > 1) {
     checkVar(emat, groupVec)
-  } else { 
+  } else {
     checkVar(emat[geneNames, ], groupVec)}
 
   nComb = choose(nrow(emat), length(geneNames))
@@ -233,13 +231,13 @@ calcDeltaCCD = function(
   refCor, emat, groupVec, groupNormal, refEmat = NULL, nPerm = 1000,
   geneNames = NULL, dopar = FALSE, scale = FALSE) {
   group2Now = i = NULL
-  
+
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
   refCor = checkRefCor(refCor, refEmat, geneNames, method)
   geneNames = checkGenes(emat, refCor)
- 
+
   if (length(groupVec) != ncol(emat)) {
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (!(groupNormal %in% groupVec)) {
@@ -250,7 +248,7 @@ calcDeltaCCD = function(
       stop('groupVec contains only one unique group.')
     } else if (min(tt) < 3) {
       stop('Each unique group in groupVec must have at least three samples.')}}
-  
+
   checkVar(emat[geneNames, ], groupVec)
 
   result = data.table(
@@ -291,15 +289,15 @@ calcDeltaCCD = function(
 
 #' Gene expression data for GSE19188.
 #'
-#' Data of gene expression measured by microarray for tumor and non-tumor
-#' samples from human non-small cell lung cancer.
+#' Data of gene expression measured by microarray for samples from human
+#' non-small cell lung cancer.
 #'
 #' @format A list with two objects:
 #' \describe{
-#'    \item{emat}{matrix of normalized expression values, where each row
-#'      corresponds to a gene (rownames correspond to Entrez gene IDs) and each
-#'      column corresponds to a sample}
-#'    \item{groupVec}{vector of condition (tumor or non-tumor) for each sample}
+#'    \item{emat}{Matrix of normalized expression values, where each row
+#'      corresponds to a gene (rownames are Entrez Gene IDs) and each column
+#'      corresponds to a sample. To save space, genes have been downsampled.}
+#'    \item{groupVec}{Vector of condition (tumor or healthy) for each sample.}
 #' }
 #'
 #' @source <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19188>
