@@ -1,5 +1,6 @@
 # deltaccd 1.0.1
 * Downsampled genes in GSE19188 to reduce package size.
+* Fixed recent bug in deltaCCD calculation.
 
 # deltaccd 0.2.7
 * `calcCCD` and `calcDeltaCCD` now produce .csv lists of genes with zero group-wise variance or which are missing from the reference.

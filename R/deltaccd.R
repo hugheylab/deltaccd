@@ -120,15 +120,13 @@ getRefCor = function(
 calcCCD = function(
   refCor, emat, groupVec = NULL, refEmat = NULL, nPerm = 1000, geneNames = NULL,
   dopar = FALSE, scale = FALSE) {
-  groupNow = NULL
 
+  groupNow = NULL
   method = 'spearman'
   doOp = if (isTRUE(dopar)) `%dorng%` else `%do%`
 
-
   refCor = checkRefCor(refCor, refEmat, geneNames, method)
   geneNames = checkGenes(emat, refCor, geneNames)
-
 
   if (is.null(groupVec)) {
     groupVec = rep('all', ncol(emat))
