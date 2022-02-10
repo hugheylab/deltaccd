@@ -9,7 +9,7 @@ NULL
 #'
 #' The pan-tissue reference matrix is based on a fixed-effects meta-analysis of
 #' eight circadian transcriptome datasets from mice, as described in
-#' [Shilts et al. 2018](https://doi.org/10.7717/peerj.4327). The human blood
+#' Shilts et al. 2018(\doi{https://doi.org/10.7717/peerj.4327}). The human blood
 #' reference matrix is based an analysis of three microarray datasets
 #' (manuscript in preparation).
 #'

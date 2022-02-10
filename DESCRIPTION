@@ -1,6 +1,6 @@
 Package: deltaccd
 Type: Package
-Title: Quantify rhythmic gene co-expression relative to a reference
+Title: Quantify Rhythmic Gene Co-Expression Relative to a Reference
 Version: 1.0.1
 Authors@R: c(
   person('Jake', 'Hughey', , 'jakejhughey@gmail.com', c('aut', 'cre')),
@@ -31,5 +31,4 @@ Suggests:
   rmarkdown,
   testthat (>= 3.0.0),
   vdiffr
-VignetteBuilder: knitr
 Config/testthat/edition: 3
