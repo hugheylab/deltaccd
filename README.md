@@ -3,12 +3,21 @@
 [![check-deploy](https://github.com/hugheylab/deltaccd/workflows/check-deploy/badge.svg)](https://github.com/hugheylab/deltaccd/actions)
 [![codecov](https://codecov.io/gh/hugheylab/deltaccd/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/deltaccd)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ddd35b6b-7210-442f-83e7-7115b23d9585/deploy-status)](https://app.netlify.com/sites/jovial-lovelace-7e335a/deploys)
+[![CRAN Status](https://www.r-pkg.org/badges/version/deltaccd)](https://cran.r-project.org/package=deltaccd)
 
 `deltaccd` infers the progression of circadian rhythms using gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
 For details about the method and to see how we used it to analyze circadian gene expression in human cancer, check out [Shilts et al. (PeerJ)](https://doi.org/10.7717/peerj.4327) and the [accompanying results](https://doi.org/10.6084/m9.figshare.4906745).
 
 ## Installation
+
+### Option 1: CRAN
+
+```r
+install.packages('deltaccd')
+```
+
+### Option 2: Hughey Lab Drat Repository
 
 1. Install [`BiocManager`](https://cran.r-project.org/package=BiocManager).
 
