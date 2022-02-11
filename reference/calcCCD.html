@@ -19,7 +19,7 @@ genes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">deltaccd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -111,22 +111,10 @@ pairs.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://deltaccd.hugheylab.org">'deltaccd'</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/RevolutionAnalytics/doparallel" class="external-link">'doParallel'</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://renozao.github.io/doRNG" class="external-link">'doRNG'</a></span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/doParallel/man/registerDoParallel.html" class="external-link">registerDoParallel</a></span><span class="op">(</span>cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">35813</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">35813</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">refCor</span> <span class="op">=</span> <span class="fu"><a href="getRefCor.html">getRefCor</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ccdResult</span> <span class="op">=</span> <span class="fu">calcCCD</span><span class="op">(</span><span class="va">refCor</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">emat</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">groupVec</span>, dopar <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">deltaCcdResult</span> <span class="op">=</span> <span class="fu"><a href="calcDeltaCCD.html">calcDeltaCCD</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">refCor</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">emat</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">groupVec</span>, <span class="st">'non-tumor'</span>, dopar <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">pRef</span> <span class="op">=</span> <span class="fu"><a href="plotRefHeatmap.html">plotRefHeatmap</a></span><span class="op">(</span><span class="va">refCor</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pTest</span> <span class="op">=</span> <span class="fu"><a href="plotHeatmap.html">plotHeatmap</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">refCor</span><span class="op">)</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">emat</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">groupVec</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span class="va">ccdResult</span> <span class="op">=</span> <span class="fu">calcCCD</span><span class="op">(</span><span class="va">refCor</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">emat</span>, <span class="va">GSE19188</span><span class="op">$</span><span class="va">groupVec</span>, nPerm <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
