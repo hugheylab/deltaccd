@@ -1,3 +1,6 @@
+# deltaccd 1.0.2
+* Updated examples.
+
 # deltaccd 1.0.1
 * Downsampled genes in GSE19188 to reduce package size.
 * Fixed recent bug in deltaCCD calculation.

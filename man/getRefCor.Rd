@@ -29,25 +29,6 @@ Shilts et al. 2018(\doi{https://doi.org/10.7717/peerj.4327}). The human blood
 reference matrix is based an analysis of three microarray datasets
 (manuscript in preparation).
 }
-\examples{
-\dontrun{
-library('deltaccd')
-library('doParallel')
-library('doRNG')
-
-registerDoParallel(cores = 2)
-set.seed(35813)
-
-refCor = getRefCor()
-ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-deltaCcdResult = calcDeltaCCD(
-  refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
-
-pRef = plotRefHeatmap(refCor)
-pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
-}
-
-}
 \seealso{
 \link{GSE19188}, \code{\link[=plotRefHeatmap]{plotRefHeatmap()}}, \code{\link[=calcCCD]{calcCCD()}}, \code{\link[=calcDeltaCCD]{calcDeltaCCD()}}
 }
