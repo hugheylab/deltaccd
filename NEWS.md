@@ -1,4 +1,7 @@
 # deltaccd 1.0.2
+* Updated tests for calcDeltaCCDSimple andd calcDeltaCCD.
+
+# deltaccd 1.0.2
 * Updated examples.
 
 # deltaccd 1.0.1
