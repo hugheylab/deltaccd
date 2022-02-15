@@ -1,6 +1,6 @@
 calcCorr = function(ematNow, groupVec, method = 'spearman') {
   .SD = group = gene1 = gene2 = NULL
-  
+
   dt = data.table(t(ematNow), group = groupVec)
 
   dt = dt[, data.table(stats::cor(.SD, method = method),
@@ -66,22 +66,9 @@ plotHeatmapSimple = function(ggObj, cLims) {
 #'   function or by [plotRefHeatmap()].
 #'
 #' @examples
-#' \dontrun{
-#' library('deltaccd')
-#' library('doParallel')
-#' library('doRNG')
-#'
-#' registerDoParallel(cores = 2)
-#' set.seed(35813)
-#'
 #' refCor = getRefCor()
-#' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(
-#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
-#'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
-#' }
 #'
 #' @seealso [calcCCD()], [calcDeltaCCD()], [plotRefHeatmap()]
 #'
@@ -95,7 +82,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
     stop('Length of groupVec does not match the number of columns in emat.')
   } else if (min(table(groupVec)) < 3) {
     stop('Each unique group in groupVec must have at least three samples.')}
-  
+
   sharedGenes = intersect(geneNames, rownames(emat))
   if (length(sharedGenes) < 2) {
     stop('Fewer than two genes in the supplied vector are in the expression matrix.')
@@ -103,7 +90,7 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
     warning(sprintf('%d gene(s) in the supplied vector is/are not in the expression matrix.',
                     length(geneNames) - length(sharedGenes)))}
   ematNow = emat[sharedGenes, ]
-  
+
   dt = calcCorr(ematNow, groupVec, method)
   cLims = calcColorLimits(dt$rho)
   p = plotHeatmapSimple(
@@ -122,22 +109,9 @@ plotHeatmap = function(geneNames, emat, groupVec = NULL) {
 #'   function or by [plotHeatmap()].
 #'
 #' @examples
-#' \dontrun{
-#' library('deltaccd')
-#' library('doParallel')
-#' library('doRNG')
-#'
-#' registerDoParallel(cores = 2)
-#' set.seed(35813)
-#'
 #' refCor = getRefCor()
-#' ccdResult = calcCCD(refCor, GSE19188$emat, GSE19188$groupVec, dopar = TRUE)
-#' deltaCcdResult = calcDeltaCCD(
-#'   refCor, GSE19188$emat, GSE19188$groupVec, 'non-tumor', dopar = TRUE)
-#'
 #' pRef = plotRefHeatmap(refCor)
 #' pTest = plotHeatmap(rownames(refCor), GSE19188$emat, GSE19188$groupVec)
-#' }
 #'
 #' @seealso [getRefCor()], [plotHeatmap()]
 #'
@@ -146,7 +120,7 @@ plotRefHeatmap = function(refCor) {
   gene1 = gene2 = NULL
   if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
-  
+
   geneNames = rownames(refCor)
 
   dt = data.table(refCor, gene1 = rownames(refCor))
@@ -154,7 +128,7 @@ plotRefHeatmap = function(refCor) {
     dt, id.vars = 'gene1', variable.name = 'gene2', variable.factor = FALSE,
     value.name = 'rho')
   dt = dt[gene1 != gene2]
-  
+
   dt[, gene1 := factor(gene1, rownames(refCor))]
   dt[, gene2 := factor(gene2, rev(rownames(refCor)))]
 
