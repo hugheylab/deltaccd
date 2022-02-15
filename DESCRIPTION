@@ -1,7 +1,7 @@
 Package: deltaccd
 Type: Package
 Title: Quantify Rhythmic Gene Co-Expression Relative to a Reference
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: c(
   person('Jake', 'Hughey', , 'jakejhughey@gmail.com', c('aut', 'cre')),
   person('Elliot', 'Outland', , 'ehoutland@gmail.com', 'aut'))
