@@ -1,3 +1,6 @@
+# deltaccd 1.0.4
+* Update styling based on lintr.
+
 # deltaccd 1.0.3
 * Updated tests for calcDeltaCCDSimple andd calcDeltaCCD.
 

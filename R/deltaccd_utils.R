@@ -19,7 +19,7 @@ checkVar = function(
 
   groupNow = group = variance = NULL
 
-  varCheck = foreach (groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
+  varCheck = foreach(groupNow = sort(unique(groupVec)), .combine = rbind) %do% {
 
     varVec = apply(emat[, groupVec == groupNow], MARGIN = 1,
                    FUN = stats::var, na.rm = TRUE)
@@ -59,7 +59,7 @@ checkRefCor = function(refCor, refEmat = NULL, geneNames = NULL, method = 'spear
   if (missing(refCor)) {
     if (is.null(refEmat)) {
       stop('Either refCor or refEmat must be supplied.')}
-    refCor = stats::cor(t(refEmat[geneNames,]), method = method)
+    refCor = stats::cor(t(refEmat[geneNames, ]), method = method)
   } else if (any(rownames(refCor) != colnames(refCor)) || !isSymmetric(refCor)) {
     stop('refCor must be a correlation matrix, with identical rownames and colnames.')}
 

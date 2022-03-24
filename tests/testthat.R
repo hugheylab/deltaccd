@@ -1,4 +1,4 @@
 library(testthat)
 library(deltaccd)
 
-test_check("deltaccd")
+test_check('deltaccd')

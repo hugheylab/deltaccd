@@ -6,7 +6,7 @@ geneNames = paste0('gene_', 1:2)
 genCors = function() {
   ematNow = rbind(c(1, 0.9, 0.8, 1, 0.9, 0.8), c(1, 0.9, 0.8, -1, -0.9, -0.8))
   rownames(ematNow) = geneNames
-  groupVec = c('a' ,'a', 'a', 'b', 'b', 'b')
+  groupVec = c('a', 'a', 'a', 'b', 'b', 'b')
   cors = calcCorr(ematNow, groupVec)
   return(cors)}
 
@@ -31,7 +31,7 @@ test_that('calcCCDSimple', {
   ref = cbind(c(1, 0, -1), c(0, 1, -1), c(-1, -1, 1))
   emat = rbind(c(1, 0, 0), c(0, 1, -1), c(0, 1, 1))
   ccd = calcCCDSimple(ref, emat, scale = TRUE)
-  expect_equal(ccd, 1/3)
+  expect_equal(ccd, 1 / 3)
 })
 
 test_that('checkVar', {
@@ -75,7 +75,7 @@ test_that('checkRefCor', {
   colnames(refCor) = rownames(refCor)
   expect_equal(checkRefCor(refCor), refCor)
 
-  expect_error(checkRefCor(), 'Either refCor or refEmat must be supplied.',fixed = TRUE)
+  expect_error(checkRefCor(), 'Either refCor or refEmat must be supplied.', fixed = TRUE)
 
   rownames(refCor) = paste0('gene_', 3:4)
   expect_error(checkRefCor(refCor),

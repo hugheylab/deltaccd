@@ -221,9 +221,9 @@ calcDeltaCCD = function(
         refCor, ematNow, idx2, method = method, scale = scale)
 
       idxPerm = makePerms(idx2, nPerm = nPerm, dopar = dopar)
-      deltaCcdRand = doOp(foreach(i = 1:nrow(idxPerm), .combine = c), {
+      deltaCcdRand = doOp(foreach(i = seq_len(nrow(idxPerm)), .combine = c), {
         calcDeltaCCDSimple(
-          refCor, ematNow, idxPerm[i,], method = method, scale = scale)})
+          refCor, ematNow, idxPerm[i, ], method = method, scale = scale)})
 
       nComb = choose(length(idx2), sum(idx2))
       pvalue = statmod::permp(
