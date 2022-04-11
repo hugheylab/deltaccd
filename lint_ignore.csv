@@ -1,0 +1,7 @@
+filename,line_number,message,line
+R/deltaccd_plot.R,2,Variable and function name style should be camelCase.,.SD = group = gene1 = gene2 = NULL
+data-raw/deltaccd_create_data.R,8,Variable and function name style should be camelCase.,"cg[, entrez_mm := as.character(entrez_mm)]"
+data-raw/deltaccd_create_data.R,9,Variable and function name style should be camelCase.,"cg[, entrez_hs := as.character(entrez_hs)]"
+data-raw/deltaccd_create_data.R,13,Variable and function name style should be camelCase.,"bg[, entrez_hs := as.character(entrez_hs)]"
+data-raw/deltaccd_create_data.R,37,Variable and function name style should be camelCase.,"GSE19188 = list(emat = emat, groupVec = groupVec)"
+ 
