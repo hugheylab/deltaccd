@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/hugheylab/deltaccd/branch/master/graph/badge.svg)](https://codecov.io/gh/hugheylab/deltaccd)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ddd35b6b-7210-442f-83e7-7115b23d9585/deploy-status)](https://app.netlify.com/sites/jovial-lovelace-7e335a/deploys)
 [![CRAN Status](https://www.r-pkg.org/badges/version/deltaccd)](https://cran.r-project.org/package=deltaccd)
+[![drat version](https://raw.githubusercontent.com/hugheylab/drat/gh-pages/badges/deltaccd_drat_badge.svg)](https://github.com/hugheylab/drat/tree/gh-pages/src/contrib)
 
 `deltaccd` infers the progression of circadian rhythms using gene co-expression. `deltaccd` works even if the samples are not labeled with time of day and do not cover the entire circadian cycle.
 
