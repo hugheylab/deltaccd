@@ -1,3 +1,11 @@
 url: https://deltaccd.hugheylab.org
 template:
   bootstrap: 5
+navbar:
+  structure:
+    right: [hugheylab, search, github]
+  components:
+    hugheylab:
+      text: "Hughey Lab"
+      href: "https://www.hugheylab.org/software/"
+      aria-label: "Hughey Lab"
