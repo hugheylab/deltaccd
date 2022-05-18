@@ -3,9 +3,10 @@ template:
   bootstrap: 5
 navbar:
   structure:
-    right: [hugheylab, search, github]
+    right: [hugheylab, github]
   components:
     hugheylab:
       text: "Hughey Lab"
       href: "https://www.hugheylab.org/software/"
       aria-label: "Hughey Lab"
+      target: "_blank"
